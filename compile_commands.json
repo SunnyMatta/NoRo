@@ -1,0 +1,19 @@
+[
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-c",
+      "-Wall",
+      "-Wextra",
+      "-O2",
+      "-g",
+      "-IADDITIONALS/",
+      "-o",
+      "BINARY/LINUX_x86-64/executable",
+      "CODEBASE/main.C"
+    ],
+    "directory": "/home/mint/Documents/Projects",
+    "file": "/home/mint/Documents/Projects/CODEBASE/main.C",
+    "output": "/home/mint/Documents/Projects/BINARY/LINUX_x86-64/executable"
+  }
+]
