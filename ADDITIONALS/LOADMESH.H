@@ -66,6 +66,8 @@ model LoadMesh(const char* filepath) {
         return (model){0};
     }
 
+    
+
     //count all primitives in the file
     int total_primitives = 0;
     for (size_t i = 0; i < data->meshes_count; i++ ) {
@@ -116,6 +118,8 @@ model LoadMesh(const char* filepath) {
                 cgltf_accessor* acc = attr->data;
                 cgltf_buffer_view* view = acc->buffer_view;
 
+                
+
                 // SHADER LOCATION !!!!!!!
 
                 int location = -1;
@@ -128,6 +132,8 @@ model LoadMesh(const char* filepath) {
                     case cgltf_attribute_type_color:     location = LOC_COLOR; break;
                     default: break;
                 }
+
+                
 
                 if (location != -1)
                  {
@@ -157,9 +163,12 @@ model LoadMesh(const char* filepath) {
 
         }
     }
+
+
     cgltf_free(data);
     return (model){primitives, total_primitives};
 }
+
 
 void DrawMesh(model* m) {
     for (int i = 0; i < m->count; ++i) {
@@ -173,7 +182,7 @@ void DrawMesh(model* m) {
 
         
         if (mesh->index_count > 0) {
-            GLenum err;
+            GLenum err = 0;
             while ((err == glGetError()) != GL_NO_ERROR) {
                 fprintf(stderr, "GL ERROR : 0x%x\n", err);
             }

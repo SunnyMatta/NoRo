@@ -1,10 +1,6 @@
 #pragma once
 //
 
-#include "cglm/affine-pre.h"
-#include "cglm/affine.h"
-#include "cglm/mat4.h"
-#include "cglm/types.h"
 #include <KEYBIND.H>
 #include <data.H>
 #include <LOADMESH.H>
@@ -18,7 +14,6 @@ Camera localcamera = {{0.0f, 0.0f, 5.0f}, 0.0f, -90.0f, {0.0f, 0.0f, -1.0f}, {0.
 static inline void ProjectionSetup(GLFWwindow* window, int width, int height);
 static inline void updatecameravectors();
 static inline void render(GLFWwindow* window);
-static inline void Drawcube(void);
 
 static void ProjectionSetup(GLFWwindow* window, int width, int height, GLuint Program) {
     glfwGetFramebufferSize(window, &width, &height);
@@ -75,7 +70,7 @@ GLuint prepshader(const char* vert, const char* frag){
     glGetShaderiv(prog, GL_LINK_STATUS, &success);
     if (!success) {
         glGetProgramInfoLog(prog, 512, NULL, infolog);
-        printf("Shader Program Didn't created\n%s\n");
+        printf("Shader Program Didn't created\n%s\n", infolog);
     }
 
     glDeleteShader(vs);
@@ -86,6 +81,8 @@ GLuint prepshader(const char* vert, const char* frag){
     return prog;
 } 
 
+float deltatime = 0.0f;
+float lastframe = 0.0f;
 
 static inline void render(GLFWwindow* window) {
 
@@ -100,13 +97,28 @@ static inline void render(GLFWwindow* window) {
         ProjectionSetup(window, WIDTH, HEIGHT, program);
 
         while (!glfwWindowShouldClose(window)) {
+        float currentframe = (float)glfwGetTime();
+        deltatime = currentframe - lastframe;
+        lastframe = currentframe;
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f); 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         glUseProgram(program);
+
+        GLint lightposloc = glGetUniformLocation(program, "lightPos");
+        glUniform3f(lightposloc, 1.2f,1.0f,2.0f);
+
+        GLint lightcolorloc = glGetUniformLocation(program, "lightColor");
+        glUniform3f(lightcolorloc, 1.0f,2.0f,1.0f);
+
+        GLint objcolorloc = glGetUniformLocation(program, "objectColor");
+        glUniform3f(objcolorloc, 1.0f,0.5f,1.0f);
+
+        GLint viewposloc = glGetUniformLocation(program, "viewPos");
+        glUniform3f(viewposloc, localcamera.position[0],localcamera.position[1],localcamera.position[2]);
         // Render here
         glLoadIdentity();
-        KeyCallback(window);
+        KeyCallback(window, deltatime);
         //transform camera position and rotation based on localcamera position and orientation
         mat4 view;
         vec3 center;
@@ -136,45 +148,4 @@ static inline void render(GLFWwindow* window) {
 
         CleanupMesh(&test);
 
-}
-
-static inline void Drawcube(void) {
-    glBegin(GL_QUADS);
-    // Front face (CCW from outside)
-    glColor3f(1.0f, 0.0f, 0.0f); // Red
-    glVertex3f(-0.5f, -0.5f,  0.5f);
-    glVertex3f( 0.5f, -0.5f,  0.5f);
-    glVertex3f( 0.5f,  0.5f,  0.5f);
-    glVertex3f(-0.5f,  0.5f,  0.5f);
-    // Back face (CCW from outside)
-    glColor3f(0.0f, 1.0f, 0.0f); // Green
-    glVertex3f( 0.5f, -0.5f, -0.5f);
-    glVertex3f(-0.5f, -0.5f, -0.5f);
-    glVertex3f(-0.5f,  0.5f, -0.5f);
-    glVertex3f( 0.5f,  0.5f, -0.5f);
-    // Left face (CCW from outside)
-    glColor3f(0.0f, 0.0f, 1.0f); // Blue
-    glVertex3f(-0.5f, -0.5f, -0.5f);
-    glVertex3f(-0.5f, -0.5f,  0.5f);
-    glVertex3f(-0.5f,  0.5f,  0.5f);
-    glVertex3f(-0.5f,  0.5f, -0.5f);
-    // Right face (CCW from outside)
-    glColor3f(1.0f, 1.0f, 0.0f); // Yellow
-    glVertex3f( 0.5f, -0.5f,  0.5f);
-    glVertex3f( 0.5f, -0.5f, -0.5f);
-    glVertex3f( 0.5f,  0.5f, -0.5f);
-    glVertex3f( 0.5f,  0.5f,  0.5f);
-    // Top face (CCW from outside)
-    glColor3f(1.0f, 0.0f, 1.0f); // Magenta
-    glVertex3f(-0.5f,  0.5f,  0.5f);
-    glVertex3f( 0.5f,  0.5f,  0.5f);
-    glVertex3f( 0.5f,  0.5f, -0.5f);
-    glVertex3f(-0.5f,  0.5f, -0.5f);
-    // Bottom face (CCW from outside)
-    glColor3f(0.0f, 1.0f, 1.0f); // Cyan
-    glVertex3f(-0.5f, -0.5f, -0.5f);
-    glVertex3f( 0.5f, -0.5f, -0.5f);
-    glVertex3f( 0.5f, -0.5f,  0.5f);
-    glVertex3f(-0.5f, -0.5f,  0.5f);
-    glEnd();
 }
