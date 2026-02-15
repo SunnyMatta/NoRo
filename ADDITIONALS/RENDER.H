@@ -1,6 +1,8 @@
 #pragma once
 //
 
+#include "cglm/affine-pre.h"
+#include "cglm/types.h"
 #include <KEYBIND.H>
 #include <data.H>
 #include <LOADMESH.H>
@@ -10,6 +12,7 @@
 
 Camera localcamera = {{0.0f, 0.0f, 5.0f}, 0.0f, -90.0f, {0.0f, 0.0f, -1.0f}, {0.0f, 1.0f, 0.0f}}; // Initial camera position and orientation
 
+float deltatime = 0;
 
 static inline void ProjectionSetup(GLFWwindow* window, int width, int height);
 static inline void updatecameravectors();
@@ -81,7 +84,6 @@ GLuint prepshader(const char* vert, const char* frag){
     return prog;
 } 
 
-float deltatime = 0.0f;
 float lastframe = 0.0f;
 
 static inline void render(GLFWwindow* window) {
@@ -118,7 +120,9 @@ static inline void render(GLFWwindow* window) {
         glUniform3f(viewposloc, localcamera.position[0],localcamera.position[1],localcamera.position[2]);
         // Render here
         glLoadIdentity();
-        KeyCallback(window, deltatime);
+        KeyCallback(window);
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        glfwSetCursorPosCallback(window, mousecallback);
         //transform camera position and rotation based on localcamera position and orientation
         mat4 view;
         vec3 center;
@@ -134,7 +138,9 @@ static inline void render(GLFWwindow* window) {
 
         mat4 modelpos;
 
+        vec3 modelposition = {0,0,2};
         glm_mat4_identity(modelpos);
+        glm_translate(modelpos, modelposition);
         glm_scale_uni(modelpos, 0.1f);
 
         GLint modelloc = glGetUniformLocation(program, "model");
