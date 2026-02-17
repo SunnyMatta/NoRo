@@ -1,7 +1,5 @@
 #pragma once
 
-#include <cstdio>
-#include <strings.h>
 #include <data.H>
 
 #define CGLTF_IMPLEMENTATION
@@ -41,6 +39,10 @@ GLenum mapcomponenttype(cgltf_component_type type){
         case cgltf_component_type_r_32f: return GL_FLOAT;
         default: return GL_FLOAT;
     }
+}
+
+void implnoiseflat(){
+
 }
 
 model LoadMesh(const char* filepath) {

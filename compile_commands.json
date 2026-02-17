@@ -8,6 +8,7 @@
       "-O2",
       "-g",
       "-IADDITIONALS/",
+      "-Isources/perlin-lib/",
       "-o",
       "BINARY/LINUX_x86-64/executable",
       "CODEBASE/main.C"

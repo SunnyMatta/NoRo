@@ -1,11 +1,10 @@
 #pragma once
 //
 
-#include "cglm/affine-pre.h"
-#include "cglm/types.h"
 #include <KEYBIND.H>
 #include <data.H>
 #include <LOADMESH.H>
+#include <perlin.h>
 
 #define _1VERT "/home/mint/Documents/Projects/DATA/SHADERS/shader.vert"
 #define _1FRAQ "/home/mint/Documents/Projects/DATA/SHADERS/shader.frag"
@@ -18,7 +17,7 @@ static inline void ProjectionSetup(GLFWwindow* window, int width, int height);
 static inline void updatecameravectors();
 static inline void render(GLFWwindow* window);
 
-static void ProjectionSetup(GLFWwindow* window, int width, int height, GLuint Program) {
+static inline void ProjectionSetup(GLFWwindow* window, int width, int height, GLuint Program) {
     glfwGetFramebufferSize(window, &width, &height);
     glViewport(0, 0, width, height);
     mat4 projection;

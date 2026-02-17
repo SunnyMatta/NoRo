@@ -2,7 +2,6 @@
 #pragma once
 //
 
-#include <data.H>
 #include <RENDER.H>
 #include <LOADMESH.H>
 
