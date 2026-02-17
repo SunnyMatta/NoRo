@@ -4,6 +4,7 @@
 
 #include <RENDER.H>
 #include <LOADMESH.H>
+#include <cstdlib>
 
 static inline int INIT(GLFWwindow** window) {
     if (!glfwInit()) {
@@ -43,4 +44,5 @@ static inline void RENDER(GLFWwindow* window) {
 static inline void CLEANUP(GLFWwindow* window) {
     glfwDestroyWindow(window);
     glfwTerminate();
+
 }

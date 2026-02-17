@@ -1,6 +1,12 @@
 #pragma once
 
+#include "USRDATA.H"
+#include "cglm/vec3.h"
+#include <cstdint>
+#include <cstdio>
+#include <cstdlib>
 #include <data.H>
+#include <sys/types.h>
 
 #define CGLTF_IMPLEMENTATION
 #include <cgltf/cgltf.h>
@@ -41,7 +47,54 @@ GLenum mapcomponenttype(cgltf_component_type type){
     }
 }
 
-void implnoiseflat(){
+void MeshOperator4fv(GLuint program, GLint uniform, mat4 Model, vec3 Position, float scale){
+    glm_mat4_identity(Model);
+    glm_translate(Model, Position);
+    glm_scale_uni(Model, scale);
+    glUniformMatrix4fv(uniform, 1, GL_FALSE, (float*)Model);
+}
+
+model InitMesh(Vertex* vertices, int vc, uint32_t *indices, int ic){
+    model m;
+    m.count = 1;
+    m.primitives = (meshdata*)malloc(sizeof(meshdata) * m.count);
+
+    m.primitives[0].index_count = ic;
+    m.primitives[0].index_type = GL_UNSIGNED_INT;
+    m.primitives[0].draw_mode = GL_TRIANGLES;
+
+    m.primitives[0].vbos_count = 1;
+    m.primitives[0].vbos = (GLuint*)malloc(sizeof(GLuint) * 1);
+
+    glGenVertexArrays(1, &m.primitives[0].vao);
+    glGenBuffers(1,&m.primitives[0].ebo);
+    glGenBuffers(1,m.primitives[0].vbos);
+
+    glBindVertexArray(m.primitives[0].vao);
+
+    glBindBuffer(GL_ARRAY_BUFFER, m.primitives[0].vbos[0]);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * vc, vertices, GL_STATIC_DRAW);
+
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m.primitives[0].ebo);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint32_t) * ic, indices, GL_STATIC_DRAW);
+
+    glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE,3 * sizeof(Vertex), (void*)0);
+    glEnableVertexAttribArray(0);
+
+    glVertexAttribPointer(1,3,GL_FLOAT,GL_FALSE,3 * sizeof(Vertex), (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
+
+    glVertexAttribPointer(2,2,GL_FLOAT,GL_FALSE,3 *sizeof(Vertex), (void*)(6 * sizeof(float)));
+    glEnableVertexAttribArray(2);
+
+    glBindVertexArray(0);
+
+    if(m.primitives[0].vao != 0){
+        return m;
+    }else {
+        printf("model init error");
+    }
 
 }
 
@@ -172,6 +225,7 @@ model LoadMesh(const char* filepath) {
 }
 
 
+
 void DrawMesh(model* m) {
     for (int i = 0; i < m->count; ++i) {
         meshdata* mesh = &m->primitives[i];
@@ -185,7 +239,7 @@ void DrawMesh(model* m) {
         
         if (mesh->index_count > 0) {
             GLenum err = 0;
-            while ((err == glGetError()) != GL_NO_ERROR) {
+            while ((err = glGetError()) != GL_NO_ERROR) {
                 fprintf(stderr, "GL ERROR : 0x%x\n", err);
             }
             glBindVertexArray(mesh->vao);
@@ -195,6 +249,19 @@ void DrawMesh(model* m) {
         }
     }
     glBindVertexArray(0);
+}
+
+void DrawMeshLOD(model* LODS, vec3 CamPos, vec3 MeshPos){
+    float dist = glm_vec3_distance(CamPos, MeshPos);
+
+    printf("Camera position :%lf\nMesh Position :%lf\nDistance : %f\n", CamPos, MeshPos, dist);
+    if (dist < 10.0f) {
+        DrawMesh(&LODS[0]);
+    }else if(dist < 100.0f) {
+        DrawMesh(&LODS[1]);
+    }else {
+        DrawMesh(&LODS[2]);
+    }
 }
 
 void CleanupMesh(model* m) {

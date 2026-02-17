@@ -13,6 +13,7 @@ It also can contain global variables that are shared across multiple headers/sou
 #include <cglm/cglm.h>
 #include <GLFW/glfw3.h>
 
+#include <stdlib.h>
 #include <string.h>
 #include <sys/types.h>
 

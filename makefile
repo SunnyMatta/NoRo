@@ -1,8 +1,8 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -O2 -g
-LDFLAGS =-Lsources/perlin-lib/ -lglobal -lGL -lglfw -lm -lGLEW
+LDFLAGS =-Lsources/perlin-lib/ -lGL -lglfw -lm -lGLEW
 INCLUDES = -IADDITIONALS/ -Isources/perlin-lib/
-SOURCES = CODEBASE/main.C CODEBASE/perlin.c
+SOURCES = CODEBASE/main.C
 OUTPUT = BINARY/LINUX_x86-64/executable
 
 
