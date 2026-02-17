@@ -1,32 +1,39 @@
 #version 330 core
 out vec4 FragColor;
 
-in vec3 Normal;
-in vec3 FragPos;
+in vec2 TexCoords;
+in mat3 TBN;
 
-uniform vec3 lightPos; 
-uniform vec3 viewPos; // Camera position
-uniform vec3 lightColor;
-uniform vec3 objectColor;
+uniform sampler2D diffuseMap;
+uniform sampler2D normalMap;
+
+// Temporary Toggle Uniforms
+uniform bool useTextures; 
+uniform bool useNormalMap;
 
 void main() {
-    // 1. Ambient
-    float ambientStrength = 0.1;
-    vec3 ambient = ambientStrength * lightColor;
-  	
-    // 2. Diffuse 
-    vec3 norm = normalize(Normal);
-    vec3 lightDir = normalize(lightPos - FragPos);
-    float diff = max(dot(norm, lightDir), 0.0);
-    vec3 diffuse = diff * lightColor;
-    
-    // 3. Specular (The shine)
-    float specularStrength = 0.5;
-    vec3 viewDir = normalize(viewPos - FragPos);
-    vec3 reflectDir = reflect(-lightDir, norm);  
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
-    vec3 specular = specularStrength * spec * lightColor;  
-        
-    vec3 result = (ambient + diffuse + specular) * objectColor;
-    FragColor = vec4(result, 1.0);
+    // 1. Handle Diffuse
+    vec3 color;
+    if (useTextures) {
+        color = texture(diffuseMap, TexCoords).rgb;
+    } else {
+        color = vec3(0.5, 0.5, 0.5); // Default Grey
+    }
+
+    // 2. Handle Normals
+    vec3 worldNormal;
+    if (useNormalMap) {
+        vec3 normal = texture(normalMap, TexCoords).rgb;
+        normal = normalize(normal * 2.0 - 1.0);
+        worldNormal = normalize(TBN * normal);
+    } else {
+        // Fallback to the geometric normal (the Z-axis of the TBN)
+        worldNormal = normalize(TBN[2]); 
+    }
+
+    // Simple lighting for testing
+    vec3 lightDir = normalize(vec3(1.0, 1.0, 1.0));
+    float diff = max(dot(worldNormal, lightDir), 0.2); // 0.2 min light
+
+    FragColor = vec4(color * diff, 1.0);
 }

@@ -126,6 +126,7 @@ static inline void render(GLFWwindow* window) {
 
         glUseProgram(program); //shader
 
+
         GLint flatcolloc = glGetUniformLocation(program, "flatcolor");
         glUniform3f(flatcolloc, 0.5f,0.5f,0.5f);
 
