@@ -505,6 +505,7 @@ void modelupdate(model* m){
     glm_scale(m->modelmatrix, m->scale);
 }
 
+
 void DrawMesh(model* m, GLuint program) {
     for (int i = 0; i < m->count; ++i) {
         meshdata* data = &m->primitives[i];
