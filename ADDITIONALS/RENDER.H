@@ -1,6 +1,6 @@
 #pragma once
 //
-
+#include "cglm/types.h"
 #include <KEYBIND.H>
 #include <sys/types.h>
 #include <data.H>
@@ -8,9 +8,10 @@
 #include <perlin.h>
 #include <USRDATA.H>
 
-#define _1VERT "/home/mint/Documents/Projects/DATA/SHADERS/shader.vert"
-#define _1FRAQ "/home/mint/Documents/Projects/DATA/SHADERS/shader.frag"
-
+#define _1VERT "/home/mint/Documents/Projects/DATA/SHADERS/pbr.vert"
+#define _1FRAQ "/home/mint/Documents/Projects/DATA/SHADERS/pbr.frag"
+#define _2VERT "/home/mint/Documents/Projects/DATA/SHADERS/shadow.vert"
+#define _2FRAQ "/home/mint/Documents/Projects/DATA/SHADERS/shadow.frag"
 Camera localcamera = {{0.0f, 0.0f, 5.0f}, 0.0f, -90.0f, {0.0f, 0.0f, -1.0f}, {0.0f, 1.0f, 0.0f}}; // Initial camera position and orientation
 
 float deltatime = 0;
@@ -18,6 +19,17 @@ float deltatime = 0;
 inline void ProjectionSetup(GLFWwindow* window, int width, int height);
 inline void CameraYawPitch();
 static inline void render(GLFWwindow* window);
+
+void CalculateMatrixLight(vec3 lightposition, mat4 destination){
+    mat4 lightprojection, lightview;
+
+    glm_ortho(-10.0f, 10.0f, -10.0f, 10.0f, 0.1f, 40.0f, lightprojection);
+    vec3 center = {0.0f, 0.0f, 0.0f};
+    vec3 up = {0.0f, 1.0f, 0.0f};
+    glm_lookat(lightposition,center,up,lightview);
+
+    glm_mat4_mul(lightprojection, lightview, destination);
+}
 
 
 inline void ProjectionSetup(GLFWwindow* window, int width, int height, GLuint Program) {
@@ -90,95 +102,105 @@ float lastframe = 0.0f;
 
 static inline void render(GLFWwindow* window) {
 
-        GLuint program = prepshader(_1VERT, _1FRAQ);
+        GLuint PBR = prepshader(_1VERT, _1FRAQ);
+        GLuint Shadow = prepshader(_2VERT, _2FRAQ);
 
-        model test[2] = {LoadMesh("DATA/DamagedHelmet.glb")};
+        model test = LoadMesh("DATA/DamagedHelmet/DamagedHelmet.gltf");
 
-        if (test[0].count == 0) {
+        if (test.count == 0) {
             printf("err");
             return;
         }
+        Object mod;
+        mod.Position[0] = 0.0f;
+        mod.Position[1] = 0.0f;
+        mod.Position[2] = 0.0f;
+        mod.Scale = 0.0f;
+        //memcpy(mod.Position, (vec3){0.0f, 0.0f, 0.0f}, sizeof(float) * 3);
+        initshadow();
 
-        Vertex* vertex = NULL;
-        uint32_t* indic = NULL;
+            while (!glfwWindowShouldClose(window)) {
 
+                mat4 lightspacematrix;
+                mat4 modelmatrix;
+                mat4 projection;
+                vec3 lightpos = {0.0f, 5.0f, 1.0f};
+                mat4 view;
+                vec3 center;
 
-        int imountain = flatrandom(&vertex, &indic, 200);
-        int vmountain = 20*20;
-
-        model mountain = InitMesh(vertex, vmountain, indic, imountain);
-        
-
-        free(vertex);
-        free(indic);
-
-        ProjectionSetup(window, WIDTH, HEIGHT, program);
-
-        while (!glfwWindowShouldClose(window)) {
         //
         float currentframe = (float)glfwGetTime();
         deltatime = currentframe - lastframe;
         lastframe = currentframe;
         // 
-
-        glClearColor(0.0f, 0.0f, 0.0f, 1.0f); 
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        glUseProgram(program); //shader
-
-
-        GLint flatcolloc = glGetUniformLocation(program, "flatcolor");
-        glUniform3f(flatcolloc, 0.5f,0.5f,0.5f);
-
-        GLint lightposloc = glGetUniformLocation(program, "lightPos");
-        glUniform3f(lightposloc, 1.2f,1.0f,2.0f);
-
-        GLint lightcolorloc = glGetUniformLocation(program, "lightColor");
-        glUniform3f(lightcolorloc, 1.0f,2.0f,1.0f);
-
-        GLint objcolorloc = glGetUniformLocation(program, "objectColor");
-        glUniform3f(objcolorloc, 1.0f,0.5f,1.0f);
-
-        GLint viewposloc = glGetUniformLocation(program, "viewPos");
-        glUniform3f(viewposloc, localcamera.position[0],localcamera.position[1],localcamera.position[2]);
-        
-        // Render here
-
-        glLoadIdentity();
-
+        // INPUT
         KeyCallback(window);
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
         glfwSetCursorPosCallback(window, mousecallback);
-
-        //transform camera position and rotation based on localcamera position and orientation
-
-
         CameraYawPitch();
 
         // CAMERA
-        mat4 view;
-        vec3 center;
-        glm_vec4_add(localcamera.position, localcamera.front, center);
+        glm_vec3_add(localcamera.position, localcamera.front, center);
         glm_lookat(localcamera.position, center, localcamera.up, view);
-        GLint viewloc = glGetUniformLocation(program, "view");
-        glUniformMatrix4fv(viewloc, 1, GL_FALSE, (float*)view);
+        glm_perspective(glm_rad(45.0f), (float)WIDTH / (float)HEIGHT, 0.1f, 100.0f, projection);
+        
+        //Calculate light matrix
+        CalculateMatrixLight(lightpos, lightspacematrix);
+        //
+
+        //Model Matrix
+        glm_mat4_identity(modelmatrix);
+        GLenum err;
+
+        while ((err = glGetError()) != GL_NO_ERROR) {
+            printf("ERR! = %d\n", err);
+        }
+        // SHADOW CALCULATOR
+        glViewport(0, 0, SHADOWWIDTH, SHADOWHEIGHT);
+        glBindFramebuffer(GL_FRAMEBUFFER, shadowfbo); 
+        glClear(GL_DEPTH_BUFFER_BIT);
+        glUseProgram(Shadow);
+
+        glUniformMatrix4fv(glGetUniformLocation(Shadow, "u_LightSpaceMatrix"), 1, GL_FALSE, (float*)lightspacematrix);
+        glUniformMatrix4fv(glGetUniformLocation(Shadow, "model"), 1, GL_FALSE, (float*)modelmatrix);
+        
+        
+        DrawMesh(&test, Shadow);
+        
+        // PBR
+        glBindFramebuffer(GL_FRAMEBUFFER, 0); 
+        glViewport(0, 0, WIDTH,HEIGHT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        glUseProgram(PBR);
+        
+        glUniform3f((glGetUniformLocation(PBR, "u_LightPos")), lightpos[0],lightpos[1],lightpos[2]);
+
+        glUniform3f((glGetUniformLocation(PBR, "u_LightColor")), 10.0f,10.0f,10.0f);
+
+        glUniform3f((glGetUniformLocation(PBR, "u_CamPos")), localcamera.position[0],localcamera.position[1],localcamera.position[2]);
+        
+        glUniform3f((glGetUniformLocation(PBR, "u_EmissiveFactor")), 1.0f,1.0f,1.0f);
+        
+        glUniformMatrix4fv(glGetUniformLocation(PBR, "view"), 1, GL_FALSE, (float*)view);
+        glUniformMatrix4fv(glGetUniformLocation(PBR, "projection"), 1, GL_FALSE, (float*)projection);
+        glUniformMatrix4fv(glGetUniformLocation(PBR, "model"), 1, GL_FALSE, (float*)modelmatrix);
+        glUniformMatrix4fv(glGetUniformLocation(PBR, "u_LightSpaceMatrix"), 1, GL_FALSE, (float*)lightspacematrix);
+        
+        //
+        //mat4 helmet_m;
+        //GLint helmet_u = glGetUniformLocation(PBR, "model");
+        //vec3 cords = {0.0f,0.0f,0.0f};
+        //MeshOperator4fv(PBR, helmet_u, helmet_m, cords, 1.0f);
+        DrawMesh(&test, PBR);
 
         //
-        //
-
-        mat4 helmet_m;
-        GLint helmet_u = glGetUniformLocation(program, "model");
-        vec3 helmet_p= {0,0,0};
-        MeshOperator4fv(program, helmet_u, helmet_m, helmet_p, 1.0f);
-        DrawMeshLOD(test, (float*)view, helmet_p);
-
-
         glfwSwapBuffers(window);
         glfwPollEvents();
         }
 
-        glDeleteProgram(program);
-        CleanupMesh(&test[0]);
-        CleanupMesh(&mountain);
+        glDeleteProgram(Shadow);
+        glDeleteProgram(PBR);
+        CleanupMesh(&test);
 
 }

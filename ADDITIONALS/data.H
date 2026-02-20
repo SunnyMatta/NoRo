@@ -8,6 +8,7 @@ It also can contain global variables that are shared across multiple headers/sou
 
 */
 
+#include "cglm/types.h"
 #include <GL/glew.h>
 
 #include <cglm/cglm.h>
@@ -27,6 +28,12 @@ typedef struct {
     vec3 front; // Camera front vector
     vec4 up; // Camera up vector
 } Camera;
+
+typedef struct {
+    mat4 Model;
+    vec3 Position;
+    float Scale;
+}Object;
 //
 
 GLuint loaddds(const char* file){

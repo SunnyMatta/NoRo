@@ -4,7 +4,6 @@
 
 #include <RENDER.H>
 #include <LOADMESH.H>
-#include <cstdlib>
 
 static inline int INIT(GLFWwindow** window) {
     if (!glfwInit()) {
