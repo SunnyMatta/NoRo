@@ -1,6 +1,14 @@
 #pragma once
 
 #include "USRDATA.H"
+#include "cglm/affine-pre.h"
+#include "cglm/affine.h"
+#include "cglm/mat4.h"
+#include "cglm/quat.h"
+#include "cglm/types.h"
+#include "cglm/vec3.h"
+#include <cstdlib>
+#include <cstring>
 #include <data.H>
 #include <sys/types.h>
 #include <ktx.h>
@@ -32,6 +40,12 @@ typedef struct{
 typedef struct{
     meshdata* primitives;
     int count;
+
+    CGLM_ALIGN_MAT mat4 modelmatrix;
+    CGLM_ALIGN_MAT vec3 position;
+    CGLM_ALIGN_MAT vec3 scale;
+    CGLM_ALIGN_MAT versor rotation;
+    
 } model;
 
 //Data for global materials
@@ -220,7 +234,7 @@ void GLApplySampler(cgltf_texture* texture){
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapt);
     }
 }
-// For loading material from model // CHANGE THAT FROM HIST
+// For loading material from model
 material* InitMaterial(cgltf_data* data, const char* modpath, int* out){
     if(!data) return NULL;
 
@@ -469,7 +483,26 @@ model LoadMesh(const char* filepath) {
         }
     }
     cgltf_free(data);
+
     return (model){primitives, total_primitives};
+}
+
+void modelapply(model* m){
+    glm_vec3_zero(m->position);
+    glm_vec3_one(m->scale);
+    glm_quat_identity(m->rotation);
+    glm_mat4_identity(m->modelmatrix);
+}
+
+void modelupdate(model* m){   
+    glm_mat4_identity(m->modelmatrix);
+
+    glm_translate(m->modelmatrix, m->position);
+
+    mat4 rotationmat;
+    glm_quat_mat4(m->position, rotationmat);
+    glm_mat4_mul(m->modelmatrix, rotationmat, m->modelmatrix);
+    glm_scale(m->modelmatrix, m->scale);
 }
 
 void DrawMesh(model* m, GLuint program) {
@@ -533,7 +566,9 @@ void CleanupMesh(model* m) {
             glDeleteBuffers(1,&mesh->vao);
         }
     }
-    free(m->primitives);
-    m->primitives = NULL;
+    if (m->primitives != NULL) {
+        free(m->primitives);
+        m->primitives = NULL;
+    }
     m->count = 0;
 }

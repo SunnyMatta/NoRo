@@ -104,19 +104,10 @@ static inline void render(GLFWwindow* window) {
 
         GLuint PBR = prepshader(_1VERT, _1FRAQ);
         GLuint Shadow = prepshader(_2VERT, _2FRAQ);
-
+    
         model test = LoadMesh("DATA/DamagedHelmet/DamagedHelmet.gltf");
+        modelapply(&test);
 
-        if (test.count == 0) {
-            printf("err");
-            return;
-        }
-        Object mod;
-        mod.Position[0] = 0.0f;
-        mod.Position[1] = 0.0f;
-        mod.Position[2] = 0.0f;
-        mod.Scale = 0.0f;
-        //memcpy(mod.Position, (vec3){0.0f, 0.0f, 0.0f}, sizeof(float) * 3);
         initshadow();
 
             while (!glfwWindowShouldClose(window)) {
@@ -187,11 +178,8 @@ static inline void render(GLFWwindow* window) {
         glUniformMatrix4fv(glGetUniformLocation(PBR, "model"), 1, GL_FALSE, (float*)modelmatrix);
         glUniformMatrix4fv(glGetUniformLocation(PBR, "u_LightSpaceMatrix"), 1, GL_FALSE, (float*)lightspacematrix);
         
-        //
-        //mat4 helmet_m;
-        //GLint helmet_u = glGetUniformLocation(PBR, "model");
-        //vec3 cords = {0.0f,0.0f,0.0f};
-        //MeshOperator4fv(PBR, helmet_u, helmet_m, cords, 1.0f);
+        modelupdate(&test);
+        test.rotation[1] = 90;
         DrawMesh(&test, PBR);
 
         //
