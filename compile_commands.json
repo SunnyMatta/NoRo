@@ -7,14 +7,15 @@
       "-Wextra",
       "-O2",
       "-g",
+      "-std=c99",
       "-IADDITIONALS/",
       "-Isources/perlin-lib/",
       "-o",
       "BINARY/LINUX_x86-64/executable",
-      "CODEBASE/main.C"
+      "CODEBASE/main.c"
     ],
     "directory": "/home/mint/Documents/Projects",
-    "file": "/home/mint/Documents/Projects/CODEBASE/main.C",
+    "file": "/home/mint/Documents/Projects/CODEBASE/main.c",
     "output": "/home/mint/Documents/Projects/BINARY/LINUX_x86-64/executable"
   }
 ]
