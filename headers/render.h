@@ -6,10 +6,10 @@
 #include <perlin.h>
 #include <userdata.h>
 
-#define _1VERT "/home/mint/Documents/Projects/DATA/SHADERS/pbr.vert"
-#define _1FRAQ "/home/mint/Documents/Projects/DATA/SHADERS/pbr.frag"
-#define _2VERT "/home/mint/Documents/Projects/DATA/SHADERS/shadow.vert"
-#define _2FRAQ "/home/mint/Documents/Projects/DATA/SHADERS/shadow.frag"
+#define _1VERT "data/SHADERS/pbr.vert"
+#define _1FRAQ "data/SHADERS/pbr.frag"
+#define _2VERT "data/SHADERS/shadow.vert"
+#define _2FRAQ "data/SHADERS/shadow.frag"
 Camera localcamera = {{0.0f, 0.0f, 5.0f}, 0.0f, -90.0f, {0.0f, 0.0f, -1.0f}, {0.0f, 1.0f, 0.0f}}; // Initial camera position and orientation
 
 float deltatime = 0;
@@ -101,7 +101,7 @@ static inline void render(GLFWwindow* window) {
     
         //model test = LoadMesh("DATA/DamagedHelmet/DamagedHelmet.gltf");
         
-        model test = LoadMesh("DATA/DH_light/dh.gltf");
+        model test = LoadMesh("data/DH_light/dh.gltf");
         
         initshadow();
 

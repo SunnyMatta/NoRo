@@ -3,7 +3,7 @@ CFLAGS = -Wall -Wextra -O2 -g -std=c99
 LDFLAGS =-lGL -lglfw -lm -lGLEW -lktx
 INCLUDES = -Iheaders/ -Ilibs/perlin-lib/
 SOURCES = src/main.c
-OUTPUT = bin/LINUX_x86-64/executable
+OUTPUT = bin/linux_x86-64/executable
 
 
 all: $(SOURCES)

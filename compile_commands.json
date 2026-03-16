@@ -8,14 +8,14 @@
       "-O2",
       "-g",
       "-std=c99",
-      "-IADDITIONALS/",
-      "-Isources/perlin-lib/",
+      "-Iheaders/",
+      "-Ilibs/perlin-lib/",
       "-o",
-      "BINARY/LINUX_x86-64/executable",
-      "CODEBASE/main.c"
+      "bin/linux_x86-64/executable",
+      "src/main.c"
     ],
     "directory": "/home/mint/Documents/Projects",
-    "file": "/home/mint/Documents/Projects/CODEBASE/main.c",
-    "output": "/home/mint/Documents/Projects/BINARY/LINUX_x86-64/executable"
+    "file": "/home/mint/Documents/Projects/src/main.c",
+    "output": "/home/mint/Documents/Projects/bin/linux_x86-64/executable"
   }
 ]
