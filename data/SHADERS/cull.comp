@@ -1,0 +1,44 @@
+#version 460 core
+layout(local_size_x = 64) in;
+
+struct Cluster {
+    vec3 center;    float radius;
+    float error;    float parentError;
+    uint offset;    uint count;
+    uint meshId;    uint pad;
+};
+
+struct DrawCommand {
+    uint count;         uint instanceCount; uint firstIndex;
+    uint baseVertex;    uint baseInstance;
+};
+
+layout(std430, binding = 0) readonly buffer bClusters { Cluster clusters[]; };
+layout(std430, binding = 1) writeonly buffer bCommands { DrawCommand commands[]; };
+layout(binding = 2) uniform atomic_uint drawCount;
+
+uniform vec4 u_Frustum[6];
+uniform vec3 u_CamPos;
+
+void main() {
+    uint id = gl_GlobalInvocationID.x;
+    if (id >= clusters.length()) return;
+
+    Cluster c = clusters[id];
+    float dist = distance(u_CamPos, c.center);
+
+    // Nanite-lite LOD + Frustum Culling
+    if (dist >= c.error && dist < c.parentError) {
+        for(int i = 0; i < 6; i++) {
+            if(dot(u_Frustum[i].xyz, c.center) + u_Frustum[i].w < -c.radius) return;
+        }
+
+        // Add to indirect list
+        uint slot = atomicCounterIncrement(drawCount);
+        commands[slot].count = c.count;
+        commands[slot].instanceCount = 1;
+        commands[slot].firstIndex = c.offset;
+        commands[slot].baseVertex = 0;
+        commands[slot].baseInstance = c.meshId;
+    }
+}

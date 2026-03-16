@@ -1,9 +1,9 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -O2 -g -std=c99
 LDFLAGS =-lGL -lglfw -lm -lGLEW -lktx
-INCLUDES = -IADDITIONALS/ -Isources/perlin-lib/
-SOURCES = CODEBASE/main.c
-OUTPUT = BINARY/LINUX_x86-64/executable
+INCLUDES = -Iheaders/ -Ilibs/perlin-lib/
+SOURCES = src/main.c
+OUTPUT = bin/LINUX_x86-64/executable
 
 
 all: $(SOURCES)
@@ -11,3 +11,4 @@ all: $(SOURCES)
 	./$(OUTPUT)
 check:
 	clang-tidy $(SOURCES)
+
