@@ -11,8 +11,8 @@ static inline int INIT(GLFWwindow** window) {
         return -1;
     }
 
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     
     *window = glfwCreateWindow(WIDTH, HEIGHT, "OpenGL Window", NULL, NULL);
@@ -38,10 +38,12 @@ static inline int INIT(GLFWwindow** window) {
 static inline void RENDER(GLFWwindow* window) {
 
         render(window);
+        
 }
 
 static inline void CLEANUP(GLFWwindow* window) {
     glfwDestroyWindow(window);
     glfwTerminate();
+    
 
 }

@@ -1,8 +1,7 @@
 #include <init.h>
 
-/*
-This is the main file (no shit).
-I decided to use headers for my entire project, thus this file is apparatus for compilation.
+/*.
+I've decided to use headers for my entire project. I know it's weird approach.
 */
 
 GLFWwindow* window = NULL;

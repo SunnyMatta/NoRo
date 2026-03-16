@@ -66,6 +66,7 @@ typedef struct {
     float roughness;
 }material;
 
+/* These structs were needed for nanite like feature. I've decided to do this later 
 typedef struct{
     float transform[16];
     float normalmat[16];
@@ -85,10 +86,11 @@ typedef struct{
     uint32_t basevertex;
     uint32_t baseinstance;
 } Drawcommand;
+*/
 
 GLuint clusterbuf, commandbuf, counterbuf;
 
-// For mapping component type
+//For converting cgltf types into gl's understandable ones
 GLenum mapcomponenttype(cgltf_component_type type){
     switch (type) {
         case cgltf_component_type_r_8:   return GL_BYTE;
@@ -100,7 +102,7 @@ GLenum mapcomponenttype(cgltf_component_type type){
         default: return GL_FLOAT;
     }
 }
-// for convertion KTX type into GL type
+//For converting KTX types into gl's understandable ones
 GLenum GlCompressedFormat(ktx_transcode_fmt_e target, int srgb){
     switch (target) {
         case KTX_TTF_BC7_RGBA:
@@ -113,6 +115,7 @@ GLenum GlCompressedFormat(ktx_transcode_fmt_e target, int srgb){
             return 0;
     }
 }
+// Thing about shadows: Due to the shader's reformation, shadows stopped working. Yep...
 GLuint shadowfbo, shadowmap;
 
 void initshadow(){
@@ -157,7 +160,7 @@ void ResURIPath(char* Pathout, const char* model, const char* URI){
         strcat(Pathout, URI);
     }
 }
-// For transcoding textures with KTX codec
+// For transcoding textures with KTX feature
 GLuint TranscodeKTX2(cgltf_image image, const char* model, int srgb){
     ktxTexture* texture  = NULL;
     KTX_error_code result;
@@ -222,7 +225,7 @@ GLuint TranscodeKTX2(cgltf_image image, const char* model, int srgb){
 
     return gltex;
 }
-// For checking KTX in textures 
+// For checking if KTX actually exist as a feature
 cgltf_image* GetImgExtension(cgltf_texture* texture){
     if (!texture) {
         return NULL;
@@ -235,6 +238,7 @@ cgltf_image* GetImgExtension(cgltf_texture* texture){
     return texture->image;
 }
 
+// Just a Sampler for the textures
 void GLApplySampler(cgltf_texture* texture){
     GLint minfilter = GL_LINEAR_MIPMAP_LINEAR;
     GLint magfilter = GL_LINEAR;
@@ -261,7 +265,7 @@ void GLApplySampler(cgltf_texture* texture){
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapt);
     }
 }
-// For loading material from model
+// For loading materials from GLTF data
 material* InitMaterial(cgltf_data* data, const char* modpath, int* out){
     if(!data) return NULL;
 
@@ -329,7 +333,7 @@ material* InitMaterial(cgltf_data* data, const char* modpath, int* out){
 return materials;
 }
 
-// Inits mesh for inapp usage
+// Just some random function. It was used for applying Mesh coordinated into mutable variable
 void MeshOperator4fv(GLuint program, GLint uniform, mat4 Model, vec3 Position, float scale){
     glm_mat4_identity(Model);
     glm_translate(Model, Position);
@@ -337,7 +341,7 @@ void MeshOperator4fv(GLuint program, GLint uniform, mat4 Model, vec3 Position, f
     GLint Uniform = glGetUniformLocation(program, "model");
     glUniformMatrix4fv(uniform, 1, GL_FALSE, (float*)Model);
 }
-// this code is not broken. (i hope)
+// This code was used for rendering randomly generated flat using perlin-like noise.  
 model InitMesh(Vertex* vertices, int vc, uint32_t *indices, int ic){
     model m;
     m.count = 1;
@@ -457,7 +461,7 @@ model LoadMesh(const char* filepath) {
 
             size_t max_vbos = primitive->attributes_count + (primitive->indices ? 1 : 0);
 
-            // Allocating an array of VBOs : 1 by 1
+            // Allocating an array of VBOs
             m->vbos = (GLuint*)calloc(max_vbos, sizeof(GLuint));
             m->vbos_count = max_vbos;
             int vbo_idx = 0;
@@ -486,7 +490,7 @@ model LoadMesh(const char* filepath) {
                 cgltf_accessor* acc = attr->data;
                 cgltf_buffer_view* view = acc->buffer_view;
 
-                // SHADER LOCATION !!!!!!!
+                //Shader thingy
 
                 int location = -1;
 
@@ -549,6 +553,7 @@ model LoadMesh(const char* filepath) {
 
     return map;
 }
+
 
 //void modelapply(model* m){
 //    glm_vec3_zero(m->position);

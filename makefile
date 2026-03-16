@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -O2 -ggdb -std=c99
+CFLAGS = -Wall -Wextra -O3 -flto -ggdb -std=c99
 LDFLAGS =-lGL -lglfw -lm -lGLEW -lktx
 INCLUDES = -Iheaders/ -Ilibs/perlin-lib/
 SOURCES = src/main.c
