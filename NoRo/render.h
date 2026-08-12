@@ -5,10 +5,10 @@
 #include <mesh.h>
 #include <userdata.h>
 
-#define _1VERT "../../data/SHADERS/pbr.vert"
-#define _1FRAQ "../../data/SHADERS/pbr.frag"
-#define _2VERT "../../data/SHADERS/shadow.vert"
-#define _2FRAQ "../../data/SHADERS/shadow.frag"
+#define _1VERT "../../Samples/SHADERS/pbr.vert"
+#define _1FRAQ "../../Samples/SHADERS/pbr.frag"
+#define _2VERT "../../Samples/SHADERS/shadow.vert"
+#define _2FRAQ "../../Samples/SHADERS/shadow.frag"
 
 Camera localcamera = {{0.0f, 0.0f, 5.0f}, 0.0f, -90.0f, {0.0f, 0.0f, -1.0f}, {0.0f, 1.0f, 0.0f}}; // Initial camera position and orientation
 
@@ -101,7 +101,7 @@ static void render(GLFWwindow* window, void (*External)(void), void (*Externallo
         External();
     
         //model test = LoadMesh("../../data/DH_light/dh.gltf");
-        model test = LoadMesh("../../data/dh/Untitled.gltf");
+        model test = LoadMesh("../../Samples/sponza/Untitled.gltf");
         
         initshadow();
 
