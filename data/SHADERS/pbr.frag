@@ -8,9 +8,9 @@ in vec4 FragPosLightSpace;
 
 uniform sampler2D u_AlbedoMap;   
 uniform sampler2D u_NormalMap;   
-uniform sampler2D u_ORMMap;      // R: AO, G: Roughness, B: Metallic
+uniform sampler2D u_ORMMap;
 uniform sampler2D u_EmissiveMap; 
-uniform sampler2D u_ShadowMap;   
+uniform sampler2D u_ShadowMap;
 
 uniform vec3 u_EmissiveFactor; 
 uniform vec3 u_CamPos;
@@ -59,7 +59,8 @@ void main() {
     // Material Properties
     vec3 albedo = pow(texture(u_AlbedoMap, TexCoords).rgb, vec3(2.2));
     vec3 orm = texture(u_ORMMap, TexCoords).rgb;
-    float ao = orm.r;
+    //float ao = orm.r;
+    float ao = 3;
     float roughness = orm.g;
     float metallic = orm.b;
 
@@ -89,9 +90,9 @@ void main() {
         
         vec3 kS = F;
         vec3 kD = vec3(1.0) - kS;
-        kD *= 1.0 - metallic;	  
+        kD *= 1.0 - metallic;
 
-        float NdotL = max(dot(N, L), 0.0);        
+        float NdotL = max(dot(N, L), 0.0);
         Lo += (kD * albedo / PI + specular) * radiance * NdotL;
     }
 

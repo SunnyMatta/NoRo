@@ -30,6 +30,7 @@ typedef struct{
     size_t index_count;
     GLenum index_type;
     GLuint albedomap,normalmap,ormmap,emissivemap;
+    mat4 transform;
 } meshdata;
 
 typedef struct{
@@ -66,7 +67,7 @@ typedef struct {
     float roughness;
 }material;
 
-/* These structs were needed for nanite like feature. I've decided to do this later 
+/* These structs were needed for nanite like feature. I've decided that this is overkill
 typedef struct{
     float transform[16];
     float normalmat[16];
@@ -397,7 +398,7 @@ model LoadMesh(const char* filepath) {
     
     cgltf_result result = cgltf_parse_file(&options, filepath, &data); // Parse the glTF file
     
-    if (result != cgltf_result_success) { // Handle error
+    if (result != cgltf_result_success) {
         fprintf(stderr, "Failed to load glTF file: %s\n", filepath);
         return (model){0};
     }
@@ -415,6 +416,9 @@ model LoadMesh(const char* filepath) {
             total_primitives += data->nodes[i].mesh->primitives_count;
         }
     }
+
+    int total_materials = 0;
+    material* loadedmaterials = InitMaterial(data, filepath, &total_materials);
 
     if (total_primitives == 0) {
         printf("TOTAL PRIMS ARE 0!");
@@ -440,20 +444,14 @@ model LoadMesh(const char* filepath) {
             cgltf_primitive* primitive = &node->mesh->primitives[j];
             meshdata* m = &map.primitives[prim_index++];
 
+            glm_mat4_copy(localtrans, m->transform);
+
             if (primitive->material) {
-                cgltf_material* material = primitive->material;
-                if (material->pbr_metallic_roughness.base_color_texture.texture) {
-                    m->albedomap = TranscodeKTX2(*GetImgExtension(material->pbr_metallic_roughness.base_color_texture.texture), filepath, 1);
-                }
-                if (material->normal_texture.texture) {
-                    m->normalmap = TranscodeKTX2(*GetImgExtension(material->normal_texture.texture), filepath, 0);
-                }
-                if (material->pbr_metallic_roughness.metallic_roughness_texture.texture) {
-                    m->ormmap = TranscodeKTX2(*GetImgExtension(material->pbr_metallic_roughness.metallic_roughness_texture.texture), filepath, 0);
-                }
-                if (material->emissive_texture.texture) {
-                   m->emissivemap = TranscodeKTX2(*GetImgExtension(material->emissive_texture.texture), filepath, 1);
-                }
+                int mat_idx = primitive->material - data->materials;
+                m->albedomap = loadedmaterials[mat_idx].albedomap;
+                m->normalmap = loadedmaterials[mat_idx].normalmap;
+                m->ormmap = loadedmaterials[mat_idx].ormmap;
+                m->emissivemap = loadedmaterials[mat_idx].emissivemap    ;
             }
             
             glGenVertexArrays(1, &m->vao);
@@ -508,7 +506,8 @@ model LoadMesh(const char* filepath) {
                     glGenBuffers(1, &vbo);
                     m->vbos[vbo_idx++] = vbo;
                     glBindBuffer(GL_ARRAY_BUFFER, vbo);
-                    
+
+                    size_t accessor_size = acc->count * cgltf_calc_size(acc->type, acc->component_type);
                     void* data_ptr = (char*)view->buffer->data + view->offset + acc->offset;
 
                     glBufferData(GL_ARRAY_BUFFER, view->size, data_ptr, GL_STATIC_DRAW);
@@ -550,6 +549,7 @@ model LoadMesh(const char* filepath) {
     }
     glBindVertexArray(0);
     cgltf_free(data);
+    free(loadedmaterials);
 
     return map;
 }
@@ -589,11 +589,15 @@ void DrawMesh(model* m, GLuint program) {
         glUniform1f(glGetUniformLocation(program, buffer), m->lights[i].inten);
     }
 
+    GLint modelloc = glGetUniformLocation(program, "model");
+
     for (int i = 0; i < m->count; ++i) {
         meshdata* data = &m->primitives[i];
 
         printf("DEBUG: Drawing Prim %d | VAO: %u | Indices: %zu\n", i, data->vao, data->index_count);
-        
+
+        glUniformMatrix4fv(modelloc, 1, GL_FALSE, (float*)data->transform);
+
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, data->albedomap);
         glUniform1i(glGetUniformLocation(program, "u_AlbedoMap"), 0);

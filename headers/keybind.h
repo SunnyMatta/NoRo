@@ -9,11 +9,21 @@ float lastY = 0;
 bool firstmouse = true;
 float sensitivity = 5.0f;
 
+void mousecallback(GLFWwindow* window, double xpos, double ypos);
+
 static inline void KeyCallback(GLFWwindow* window) {
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    glfwSetCursorPosCallback(window, mousecallback);
 
     // Check for key presses and update camera position
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
         glm_vec3_muladds(localcamera.front, speed * deltatime, localcamera.position); // Move forward
+    }
+    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
+        speed = 5; // Move forward
+    }
+    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_RELEASE) {
+        speed = 1; // Move forward
     }
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
         glm_vec3_muladds(localcamera.front, -speed * deltatime, localcamera.position);
@@ -41,6 +51,16 @@ static inline void KeyCallback(GLFWwindow* window) {
     }
     if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
         localcamera.yaw += speed * 30 * deltatime; // Look right
+    }
+    // Q and E for up and down
+    if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) {
+        glm_vec3_muladds(localcamera.up, -speed * deltatime, localcamera.position);
+    }
+    if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) {
+        glm_vec3_muladds(localcamera.up, speed * deltatime, localcamera.position);
+    }
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
     }
     }
 

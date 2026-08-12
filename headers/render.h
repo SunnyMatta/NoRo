@@ -5,10 +5,10 @@
 #include <mesh.h>
 #include <userdata.h>
 
-#define _1VERT "data/SHADERS/pbr.vert"
-#define _1FRAQ "data/SHADERS/pbr.frag"
-#define _2VERT "data/SHADERS/shadow.vert"
-#define _2FRAQ "data/SHADERS/shadow.frag"
+#define _1VERT "../../data/SHADERS/pbr.vert"
+#define _1FRAQ "../../data/SHADERS/pbr.frag"
+#define _2VERT "../../data/SHADERS/shadow.vert"
+#define _2FRAQ "../../data/SHADERS/shadow.frag"
 
 Camera localcamera = {{0.0f, 0.0f, 5.0f}, 0.0f, -90.0f, {0.0f, 0.0f, -1.0f}, {0.0f, 1.0f, 0.0f}}; // Initial camera position and orientation
 
@@ -26,7 +26,7 @@ void CalculateMatrixLight(vec3 lightposition, mat4 destination){
 }
 
 
-inline void ProjectionSetup(GLFWwindow* window, int width, int height, GLuint Program) {
+void ProjectionSetup(GLFWwindow* window, int width, int height, GLuint Program) {
     glfwGetFramebufferSize(window, &width, &height);
     glViewport(0, 0, width, height);
     mat4 projection;
@@ -37,7 +37,7 @@ inline void ProjectionSetup(GLFWwindow* window, int width, int height, GLuint Pr
     glUniformMatrix4fv(projectionlocation, 1, GL_FALSE, (float*)projection);
 }
 
-inline void CameraYawPitch() {
+void CameraYawPitch() {
 
     vec3 front;
     front[0] = cos(glm_rad(localcamera.yaw)) * cos(glm_rad(localcamera.pitch));
@@ -53,7 +53,7 @@ GLuint prepshader(const char* vert, const char* frag){
     char infolog[512];
     int success;
     GLuint vs = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vs,1,&vertex,NULL);
+    glShaderSource(vs,1,(const GLchar * const*)&vertex,NULL);
     glCompileShader(vs);
     glGetShaderiv(vs, GL_COMPILE_STATUS, &success);
 
@@ -64,7 +64,7 @@ GLuint prepshader(const char* vert, const char* frag){
     }
 
     GLuint fs = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fs,1,&fragment,NULL);
+    glShaderSource(fs,1,(const GLchar * const*)&fragment,NULL);
     glCompileShader(fs);
     glGetShaderiv(fs, GL_COMPILE_STATUS, &success);
 
@@ -94,19 +94,20 @@ GLuint prepshader(const char* vert, const char* frag){
 
 float lastframe = 0.0f;
 
-static inline void render(GLFWwindow* window) {
+static void render(GLFWwindow* window, void (*External)(void), void (*Externalloop)(void)) {
 
         GLuint PBR = prepshader(_1VERT, _1FRAQ);
         GLuint Shadow = prepshader(_2VERT, _2FRAQ);
+        External();
     
-        model test = LoadMesh("data/DH_light/dh.gltf");
+        //model test = LoadMesh("../../data/DH_light/dh.gltf");
+        model test = LoadMesh("../../data/dh/Untitled.gltf");
         
         initshadow();
 
-            while (!glfwWindowShouldClose(window)) {
+        while (!glfwWindowShouldClose(window)) {
 
                 mat4 lightspacematrix;
-                mat4 modelmatrix;
                 mat4 projection;
                 //vec3 lightpos = {0.0f, 5.0f, 1.0f};
                 mat4 view;
@@ -116,11 +117,10 @@ static inline void render(GLFWwindow* window) {
         float currentframe = (float)glfwGetTime();
         deltatime = currentframe - lastframe;
         lastframe = currentframe;
+        Externalloop();
         // 
         // INPUT
         KeyCallback(window);
-        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-        glfwSetCursorPosCallback(window, mousecallback);
         CameraYawPitch();
 
         // CAMERA
@@ -129,11 +129,13 @@ static inline void render(GLFWwindow* window) {
         glm_perspective(glm_rad(45.0f), (float)WIDTH / (float)HEIGHT, 0.1f, 100.0f, projection);
         
         //Calculate light matrix
-        //CalculateMatrixLight(lightpos, lightspacematrix);
+        //for(int i; i < test.lightcount; i++){
+        //    CalculateMatrixLight(test.lights[i].pos, lightspacematrix);
+        //}
         //
 
         //Model Matrix
-        glm_mat4_identity(modelmatrix);
+        //glm_mat4_identity(test.primitives->transform);
         GLenum err;
 
         while ((err = glGetError()) != GL_NO_ERROR) {
@@ -141,12 +143,12 @@ static inline void render(GLFWwindow* window) {
         }
         // SHADOW CALCULATION SECTION
         glViewport(0, 0, SHADOWWIDTH, SHADOWHEIGHT);
-        glBindFramebuffer(GL_FRAMEBUFFER, shadowfbo); 
+        glBindFramebuffer(GL_FRAMEBUFFER, shadowfbo);
         glClear(GL_DEPTH_BUFFER_BIT);
         glUseProgram(Shadow);
 
         glUniformMatrix4fv(glGetUniformLocation(Shadow, "u_LightSpaceMatrix"), 1, GL_FALSE, (float*)lightspacematrix);
-        glUniformMatrix4fv(glGetUniformLocation(Shadow, "model"), 1, GL_FALSE, (float*)modelmatrix);
+        glUniformMatrix4fv(glGetUniformLocation(Shadow, "model"), 1, GL_FALSE, (float*)test.primitives->transform);
         
         
         DrawMesh(&test, Shadow);
@@ -168,7 +170,7 @@ static inline void render(GLFWwindow* window) {
         
         glUniformMatrix4fv(glGetUniformLocation(PBR, "view"), 1, GL_FALSE, (float*)view);
         glUniformMatrix4fv(glGetUniformLocation(PBR, "projection"), 1, GL_FALSE, (float*)projection);
-        glUniformMatrix4fv(glGetUniformLocation(PBR, "model"), 1, GL_FALSE, (float*)modelmatrix);
+        glUniformMatrix4fv(glGetUniformLocation(PBR, "model"), 1, GL_FALSE, (float*)test.primitives->transform);
         glUniformMatrix4fv(glGetUniformLocation(PBR, "u_LightSpaceMatrix"), 1, GL_FALSE, (float*)lightspacematrix);
         
 
