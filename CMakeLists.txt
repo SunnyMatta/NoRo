@@ -4,7 +4,7 @@ project(NoRo LANGUAGES C)
 set(CMAKE_C_STANDARD 99)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 
-include_directories(headers/)
+include_directories(NoRo/)
 
 add_executable(NoRo src/main.c)
 

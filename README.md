@@ -1,14 +1,15 @@
 # NoRo. Framework
-## This "framework" is not for production and was made for practice
-Renderer uses KTX2 for textures with opengl 3.3 with wayland/x11 support
+>[!CAUTION]
+>This is still **Work-in-Progress**. DO **NOT** USE IT FOR PRODUCTIONS
+## Dependencies
 
-its in heavy WIP
+For Fedora:
 
-## Build
+    sudo dnf install glfw-devel glew-devel
 
-### Fedora :
-[Download KTX lib](https://github.com/KhronosGroup/KTX-Software/) and essentials:
 
- `sudo dnf install glfw-devel glew-devel`
+## Usage
+This framework is based on headers only
 
-### Debian based:
+
+

@@ -9,7 +9,7 @@
 #include <ktx.h>
 
 #define CGLTF_IMPLEMENTATION
-#include <cgltf/cgltf.h>
+#include <cgltf.h>
 
 #define LOC_POSITION  0
 #define LOC_NORMAL    1
