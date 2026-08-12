@@ -21,8 +21,17 @@ https://github.com/KhronosGroup/KTX-Software/releases
     sudo pacman -S glfw-x11 glew
 
 ## Usage
-This framework is headers only based
+This framework is headers only based.
 Just copy `NoRo/` and `#include "NoRo/init.h"`
+
+Also, target libraries `-lGL -lglfw -lm -lGLEW -lktx`
+
+## Third-Party Licenses
+**Thanks** to everyone who made/maintaining these repositories!
+
+`cglm` by [recp](https://github.com/recp) (https://github.com/recp/cglm) "MIT LICENSE"
+
+`cgltf` by [jkuhlmann](https://github.com/jkuhlmann) (https://github.com/jkuhlmann/cgltf) "MIT LICENSE"
 
 
 
