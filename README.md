@@ -2,8 +2,8 @@
 >[!CAUTION]
 >This is still **Work-in-Progress**. DO **NOT** USE IT FOR PRODUCTIONS
 
-![enter image description here](images/Screenshot_20260521_183211.png)
-![enter image description here](images/Screenshot_20260812_173210.png)
+![damaged_helmet example](images/Screenshot_20260521_183211.png)
+![sponza example](images/Screenshot_20260812_173210.png)
 ## Dependencies
 
 Download KTX2 dev-tools from Khronos Repository:
