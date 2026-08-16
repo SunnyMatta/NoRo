@@ -3,7 +3,7 @@
 >This is still **Work-in-Progress**. DO **NOT** USE IT FOR PRODUCTIONS
 
 >[!NOTE]
->I used C99 not because I wanted to show hate to C++ ( I don't hate any languages ), this project was intended to be a CHALLENGE! Recently, I was thinking about project for my portfolio, and got idea to write entire framework in C. C is a hard language due to its unsafety, but that didn't stop me from building it >:3 . I don't accept any pull requests because it's for my portfolio, but i'd appreciate you open issue and point out issues in my code :)
+>I used C99 not because I wanted to show hate to C++ ( I don't hate any languages ), this project was intended to be a CHALLENGE! Recently, I was thinking about project for my portfolio, and got idea to write entire framework in C. C is a hard language due to its unsafety, but that didn't stop me from building it >:3. I don't accept any pull requests because it's for my portfolio, but i'd appreciate you open issue and point out issues in my code :)
 
 ![damaged_helmet example](images/Screenshot_20260521_183211.png)
 ![sponza example](images/Screenshot_20260812_173210.png)

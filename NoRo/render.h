@@ -33,7 +33,6 @@ void ProjectionSetup(GLFWwindow* window, int width, int height, GLuint Program) 
 }
 
 void CameraYawPitch() {
-
     vec3 front;
     front[0] = cos(glm_rad(localcamera.yaw)) * cos(glm_rad(localcamera.pitch));
     front[1] = sin(glm_rad(localcamera.pitch));

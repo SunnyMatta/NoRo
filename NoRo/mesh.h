@@ -594,9 +594,9 @@ void DrawMesh(model* m, GLuint program) {
 
     for (int i = 0; i < m->count; ++i) {
         meshdata* data = &m->primitives[i];
-
+#ifdef NoRo_DEBUG_ON
         printf("DEBUG: Drawing Prim %d | VAO: %u | Indices: %zu\n", i, data->vao, data->index_count);
-
+#endif
         glUniformMatrix4fv(modelloc, 1, GL_FALSE, (float*)data->transform);
 
         glActiveTexture(GL_TEXTURE0);

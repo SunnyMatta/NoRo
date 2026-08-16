@@ -1,7 +1,6 @@
 #include <init.h>
-
 /*.
-    THIS FILE IS JUST EXAMPLE!
+    THIS FILE IS JUST EXAMPLE! DO NOT USE IT WITHOUT MODIFICATIONS
 */
 #define _1VERT "../../Samples/SHADERS/pbr.vert"
 #define _1FRAQ "../../Samples/SHADERS/pbr.frag"
@@ -47,10 +46,11 @@ while (!glfwWindowShouldClose(window)) {
   //Model Matrix
   glm_mat4_identity(test.primitives->transform);
   GLenum err;
-
+#ifdef NoRo_DEBUG_ON
   while ((err = glGetError()) != GL_NO_ERROR) {
       printf("ERR! = %d\n", err);
   }
+#endif
   // SHADOW CALCULATION SECTION
   glViewport(0, 0, SHADOWWIDTH, SHADOWHEIGHT);
   glBindFramebuffer(GL_FRAMEBUFFER, shadowfbo);

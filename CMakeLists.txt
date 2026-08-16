@@ -8,6 +8,8 @@ include_directories(NoRo/)
 
 add_executable(NoRo src/main.c)
 
+target_compile_definitions(NoRo PRIVATE NoRo_DEBUG_ON)
+
 target_link_libraries(NoRo PRIVATE GL glfw m GLEW ktx)
 
 include(GNUInstallDirs)
