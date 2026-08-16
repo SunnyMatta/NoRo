@@ -55,6 +55,28 @@ vec3 fresnelSchlick(float cosTheta, vec3 F0) {
     return F0 + (1.0 - F0) * pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
 }
 
+float ShadowCalculation(vec4 fragPosLightSpace) {
+    // Perform perspective divide
+    vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
+    // Transform to [0,1] range
+    projCoords = projCoords * 0.5 + 0.5;
+
+    // Keep shadow at 0.0 if outside the far plane of the light's frustum
+    if(projCoords.z > 1.0)
+        return 0.0;
+
+    // Get closest depth value from light's perspective
+    float closestDepth = texture(u_ShadowMap, projCoords.xy).r;
+    // Get current fragment's depth relative to light
+    float currentDepth = projCoords.z;
+
+    // Simple bias to prevent shadow acne
+    float bias = 0.005;
+    float shadow = currentDepth - bias > closestDepth ? 1.0 : 0.0;
+
+    return shadow;
+}
+
 void main() {
     // Material Properties
     vec3 albedo = pow(texture(u_AlbedoMap, TexCoords).rgb, vec3(2.2));
@@ -63,6 +85,7 @@ void main() {
     float ao = 3;
     float roughness = orm.g;
     float metallic = orm.b;
+
 
     vec3 N = normalize(TBN * (texture(u_NormalMap, TexCoords).rgb * 2.0 - 1.0));
     vec3 V = normalize(u_CamPos - WorldPos);
@@ -92,12 +115,14 @@ void main() {
         vec3 kD = vec3(1.0) - kS;
         kD *= 1.0 - metallic;
 
-        float NdotL = max(dot(N, L), 0.0);
-        Lo += (kD * albedo / PI + specular) * radiance * NdotL;
-    }
+        float shadow = 0.0;
+        if(i == 0) {
+            shadow = ShadowCalculation(FragPosLightSpace);
+        }
 
-    // Shadowing (Assuming Light 0 is the shadow caster)
-    // You can integrate the 'shadow' variable here to multiply Lo or specific lights.
+        float NdotL = max(dot(N, L), 0.0);
+        Lo += (kD * albedo / PI + specular) * radiance * NdotL * (1.0 - shadow);
+    }
 
     vec3 ambient = vec3(0.03) * albedo * ao;
     vec3 emissive = pow(texture(u_EmissiveMap, TexCoords).rgb, vec3(2.2)) * u_EmissiveFactor;

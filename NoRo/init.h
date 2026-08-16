@@ -5,15 +5,6 @@
 #include <render.h>
 #include <mesh.h>
 
-//GLFWwindow CreateWindow(int width, int height, char* title, GLFWwindow monitor, GLFWwindow share){
-//    GLFWwindow window = glfwCreateWindow(WIDTH, HEIGHT, "OpenGL Window", NULL, NULL);
-//    if (!*window) {
-//        fprintf(stderr, "Failed to create window\n");
-//        glfwTerminate();
-//        return -1;
-//    }
-//    return window;
-//}
 
 static inline int INIT(GLFWwindow** window) {
     if (!glfwInit()) {
@@ -46,9 +37,9 @@ static inline int INIT(GLFWwindow** window) {
 }
 
 
-static inline void RENDER(GLFWwindow* window, void (*external)(void), void (*externalloop)(void)) {
+static inline void RENDER(GLFWwindow* window, void (*external)(void)) {
 
-        render(window, external, externalloop);
+        render(window, external);
         
 }
 

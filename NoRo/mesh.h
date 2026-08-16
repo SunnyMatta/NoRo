@@ -49,6 +49,8 @@ typedef struct{
     light lights[MAX_LIGHT];
     int lightcount;
 
+    mat4 lightspacematrix;
+
     mat4* instances;
 
     
@@ -116,7 +118,6 @@ GLenum GlCompressedFormat(ktx_transcode_fmt_e target, int srgb){
             return 0;
     }
 }
-// Thing about shadows: Due to the shader's reformation, shadows stopped working. Yep...
 GLuint shadowfbo, shadowmap;
 
 void initshadow(){
@@ -617,6 +618,7 @@ void DrawMesh(model* m, GLuint program) {
         glActiveTexture(GL_TEXTURE4);
         glBindTexture(GL_TEXTURE_2D, shadowmap);
         glUniform1i(glGetUniformLocation(program,"u_ShadowMap") , 4);
+
         
         glBindVertexArray(data->vao);
         
@@ -625,6 +627,8 @@ void DrawMesh(model* m, GLuint program) {
         }
 
     }
+    glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_FALSE, (float*)m->primitives->transform);
+    glUniformMatrix4fv(glGetUniformLocation(program, "u_LightSpaceMatrix"), 1, GL_FALSE, (float*)m->lightspacematrix);
     glBindVertexArray(0);
 }
 

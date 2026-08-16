@@ -81,6 +81,7 @@ unsigned int Load_HDRenv(const char* filepath){
 
 
 
+
 // Global variables
 GLFWwindow* window = NULL;
 extern Camera localcamera;
