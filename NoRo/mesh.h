@@ -69,7 +69,7 @@ typedef struct {
     float roughness;
 }material;
 
-/* These structs were needed for nanite like feature. I've decided that this is overkill
+/* These structs are for nanite like feature. Currently paused
 typedef struct{
     float transform[16];
     float normalmat[16];
@@ -381,9 +381,8 @@ model InitMesh(Vertex* vertices, int vc, uint32_t *indices, int ic){
 
     if(m.primitives[0].vao != 0){
         return m;
-    }else {
-        printf("model init error");
     }
+    printf("model init error");
 }
 
 // Name is telling

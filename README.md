@@ -1,17 +1,18 @@
 
 # NoRo. Framework
->[!CAUTION]
->This is still **Work-in-Progress**. DO **NOT** USE IT FOR PRODUCTIONS
+NoRo (Row Notation) Is a Lightweight, High-Performance 3D Renderer Written in C with memory safety. Built on top if GLTF.
+![damaged_helmet example](images/1.png)
+![sponza example](images/2.png)
+## Core Features
 
-![damaged_helmet example](images/Screenshot_20260521_183211.png)
-![sponza example](images/Screenshot_20260812_173210.png)
+* **Memory-Safe C Architecture:** Data-oriented design utilizing manual memory budgeting and safe arena patterns to manage entity and mesh lifecycles.
+* **Modern Texture Streaming:** Integrated `libktx` pipeline to load KTX2 supercompressed textures (Basis Universal/UASTC) directly into GPU VRAM, minimizing runtime transcoding overhead.
+* **glTF 2.0 Asset Compliance:** Full PBR material mapping, skeletal hierarchy tracking, and mesh rendering leveraging `cgltf` and `cglm` math utilities.
+
 ## Dependencies
 
 Download KTX2 dev-tools from Khronos's Github Repository:
 https://github.com/KhronosGroup/KTX-Software/releases
-
->[!TIP]
->Sometimes Khronos don't build their library for every system. For this situation, consider skimming versions in order to find comparable one
 
 **For Fedora:**
 

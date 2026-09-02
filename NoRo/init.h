@@ -15,6 +15,7 @@ static inline int INIT(GLFWwindow** window) {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
     
     *window = glfwCreateWindow(WIDTH, HEIGHT, "OpenGL Window", NULL, NULL);
     if (!*window) {
@@ -40,7 +41,6 @@ static inline int INIT(GLFWwindow** window) {
 static inline void RENDER(GLFWwindow* window, void (*external)(void)) {
 
         render(window, external);
-        
 }
 
 static inline void CLEANUP(GLFWwindow* window) {
