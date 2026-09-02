@@ -3,9 +3,6 @@
 >[!CAUTION]
 >This is still **Work-in-Progress**. DO **NOT** USE IT FOR PRODUCTIONS
 
->[!NOTE]
->This project is meant to be a **challenge**! Recently, I was thinking about project for my portfolio, and got idea to write entire framework in C. C is a hard language due to its unsafety, so it fits to my challenge. I don't accept any pull requests because it's for my portfolio, but I'd appreciate you open issue and point out issues in my code :)
-
 ![damaged_helmet example](images/Screenshot_20260521_183211.png)
 ![sponza example](images/Screenshot_20260812_173210.png)
 ## Dependencies
@@ -23,7 +20,8 @@ https://github.com/KhronosGroup/KTX-Software/releases
 **For Debian-based:**
 
     sudo apt update && sudo apt install libglfw3-dev libglew-dev
-  **For Arch-based:**
+
+**For Arch-based:**
 
     sudo pacman -S glfw glew
 
