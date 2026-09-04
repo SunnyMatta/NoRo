@@ -1,6 +1,6 @@
 
 # NoRo. Framework
-NoRo (Row Notation) Is a Lightweight, High-Performance 3D Renderer Written in C with memory safety. Built on top if GLTF.
+NoRo (Row Notation) Is a Lightweight, High-Performance 3D Renderer Written in C with memory safety. Built on top of GLTF.
 ![damaged_helmet example](images/1.png)
 ![sponza example](images/2.png)
 ## Core Features
