@@ -1,11 +1,10 @@
 
 # NoRo. Framework
-NoRo (Row Notation) Is a Lightweight, High-Performance 3D Renderer Written in C with memory safety. Built on top of GLTF.
+NoRo (Row Notation) Is a Lightweight, High-Performance Graphical Framework Written in C with memory safety. Built on top of GLTF.
 ![damaged_helmet example](images/1.png)
 ![sponza example](images/2.png)
 ## Core Features
 
-* **Memory-Safe C Architecture:** Data-oriented design utilizing manual memory budgeting and safe arena patterns to manage entity and mesh lifecycles.
 * **Modern Texture Streaming:** Integrated `libktx` pipeline to load KTX2 supercompressed textures (Basis Universal/UASTC) directly into GPU VRAM, minimizing runtime transcoding overhead.
 * **glTF 2.0 Asset Compliance:** Full PBR material mapping, skeletal hierarchy tracking, and mesh rendering leveraging `cgltf` and `cglm` math utilities.
 
