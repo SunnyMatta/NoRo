@@ -17,7 +17,7 @@ static inline int INIT(GLFWwindow** window) {
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     
-    *window = glfwCreateWindow(WIDTH, HEIGHT, "OpenGL Window", NULL, NULL);
+    *window = glfwCreateWindow(WIDTH, HEIGHT, "NoRo", NULL, NULL);
     if (!*window) {
         fprintf(stderr, "Failed to create window\n");
         glfwTerminate();

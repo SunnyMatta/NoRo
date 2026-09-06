@@ -6,13 +6,14 @@ in vec3 WorldPos;
 in mat3 TBN;
 in vec4 FragPosLightSpace;
 
-uniform sampler2D u_AlbedoMap;   
-uniform sampler2D u_NormalMap;   
+uniform sampler2D u_AlbedoMap;
+uniform sampler2D u_NormalMap;
 uniform sampler2D u_ORMMap;
-uniform sampler2D u_EmissiveMap; 
+uniform sampler2D u_EmissiveMap;
 uniform sampler2D u_ShadowMap;
+uniform sampler2D u_EnvMap;
 
-uniform vec3 u_EmissiveFactor; 
+uniform vec3 u_EmissiveFactor;
 uniform vec3 u_CamPos;
 
 struct Light {
@@ -24,6 +25,7 @@ uniform Light u_Lights[16];
 uniform int u_LightCount;
 
 const float PI = 3.14159265359;
+const vec2 invAtan = vec2(0.1591, 0.3183);
 
 // 1. Distribution Function (D) - Trowbridge-Reitz GGX
 // Determines how aligned the microfacets are to the halfway vector.
@@ -36,6 +38,13 @@ float DistributionGGX(vec3 N, vec3 H, float roughness) {
     float denom = (NdotH2 * (a2 - 1.0) + 1.0);
     denom = PI * denom * denom;
     return num / denom;
+}
+
+vec2 SampleSphericalMap(vec3 v) {
+    vec2 uv = vec2(atan(v.z, v.x), asin(v.y));
+    uv *= invAtan;
+    uv += 0.5;
+    return uv;
 }
 
 // 2. Geometry Function (G) - Smith's Schlick-GGX
@@ -82,7 +91,7 @@ void main() {
     vec3 albedo = pow(texture(u_AlbedoMap, TexCoords).rgb, vec3(2.2));
     vec3 orm = texture(u_ORMMap, TexCoords).rgb;
     //float ao = orm.r;
-    float ao = 3;
+    float ao = 1;
     float roughness = orm.g;
     float metallic = orm.b;
 
@@ -91,7 +100,7 @@ void main() {
     vec3 V = normalize(u_CamPos - WorldPos);
 
     // Calculate base reflectivity
-    vec3 F0 = vec3(0.04); 
+    vec3 F0 = vec3(0.04);
     F0 = mix(F0, albedo, metallic);
 
     vec3 Lo = vec3(0.0);
@@ -106,11 +115,11 @@ void main() {
         float D = DistributionGGX(N, H, roughness);
         float G = GeometrySmith(N, V, L, roughness);
         vec3 F  = fresnelSchlick(max(dot(H, V), 0.0), F0);
-        
+
         vec3 numerator    = D * G * F;
         float denominator = 4.0 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0) + 0.0001;
         vec3 specular = numerator / denominator;
-        
+
         vec3 kS = F;
         vec3 kD = vec3(1.0) - kS;
         kD *= 1.0 - metallic;
@@ -124,9 +133,13 @@ void main() {
         Lo += (kD * albedo / PI + specular) * radiance * NdotL * (1.0 - shadow);
     }
 
-    vec3 ambient = vec3(0.03) * albedo * ao;
+    vec3 R = reflect(-V, N);
+
+    vec2 envUV = SampleSphericalMap(R);
+    vec3 envColor = texture(u_EnvMap, envUV).rgb;
+    vec3 ambient = envColor * albedo * ao;
     vec3 emissive = pow(texture(u_EmissiveMap, TexCoords).rgb, vec3(2.2)) * u_EmissiveFactor;
-    
+
     vec3 color = ambient + Lo + emissive;
 
     // HDR Tone Mapping (ACES is more realistic than Reinhard)

@@ -574,7 +574,7 @@ model LoadMesh(const char* filepath) {
 //}
 
 
-void DrawMesh(model* m, GLuint program) {
+void DrawMesh(model* m, GLuint program, unsigned int HDR) {
     glUniform1i(glGetUniformLocation(program, "u_LightCount"), m->lightcount);
 
     for (int i = 0; i < m->lightcount; ++i) {
@@ -598,6 +598,12 @@ void DrawMesh(model* m, GLuint program) {
 #endif
         glUniformMatrix4fv(modelloc, 1, GL_FALSE, (float*)data->transform);
 
+        if(HDR != 0){
+            glActiveTexture(GL_TEXTURE5);
+            glBindTexture(GL_TEXTURE_2D, HDR);
+            glUniform1i(glGetUniformLocation(program, "u_EnvMap"), 5);
+        }else{
+
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, data->albedomap);
         glUniform1i(glGetUniformLocation(program, "u_AlbedoMap"), 0);
@@ -618,7 +624,8 @@ void DrawMesh(model* m, GLuint program) {
         glBindTexture(GL_TEXTURE_2D, shadowmap);
         glUniform1i(glGetUniformLocation(program,"u_ShadowMap") , 4);
 
-        
+        }
+
         glBindVertexArray(data->vao);
         
         if (data->index_count > 0) {

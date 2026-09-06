@@ -67,13 +67,25 @@ unsigned int Load_HDRenv(const char* filepath){
         return 0;
     }
 
+    GLenum format = GL_RGB;
+    if (nrComp == 4) {
+        format = GL_RGBA;
+    } else if (nrComp == 1){
+        format = GL_RED;
+    }
+
     unsigned int hdrtex;
     glGenTextures(1, &hdrtex);
     glBindTexture(GL_TEXTURE_2D, hdrtex);
 
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, width, height, 0, GL_RGB, GL_FLOAT, data);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, width, height, 0, format, GL_FLOAT, data);
 
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
+    glBindTexture(GL_TEXTURE_2D, 0);
 
     stbi_image_free(data);
     return hdrtex;

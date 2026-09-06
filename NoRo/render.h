@@ -25,6 +25,8 @@ void ProjectionSetup(GLFWwindow* window, int width, int height, GLuint Program) 
     glfwGetFramebufferSize(window, &width, &height);
     glViewport(0, 0, width, height);
     mat4 projection;
+
+    //glm_ortho(0.0f, 800.0f, 0.0f, 600.0f, 0.1f, 100.0f, projection);
     
     glm_perspective(glm_rad(45.0f), (float)width / (float)height, 0.1f, 100.0f, projection);
     glUseProgram(Program);
