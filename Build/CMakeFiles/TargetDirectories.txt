@@ -1,7 +1,0 @@
-/home/sunny/Documents/Misc-Projects/High-Definition-3DRenderer/High-Definition-3DRenderer/Build/CMakeFiles/NoRo.dir
-/home/sunny/Documents/Misc-Projects/High-Definition-3DRenderer/High-Definition-3DRenderer/Build/CMakeFiles/edit_cache.dir
-/home/sunny/Documents/Misc-Projects/High-Definition-3DRenderer/High-Definition-3DRenderer/Build/CMakeFiles/rebuild_cache.dir
-/home/sunny/Documents/Misc-Projects/High-Definition-3DRenderer/High-Definition-3DRenderer/Build/CMakeFiles/list_install_components.dir
-/home/sunny/Documents/Misc-Projects/High-Definition-3DRenderer/High-Definition-3DRenderer/Build/CMakeFiles/install.dir
-/home/sunny/Documents/Misc-Projects/High-Definition-3DRenderer/High-Definition-3DRenderer/Build/CMakeFiles/install/local.dir
-/home/sunny/Documents/Misc-Projects/High-Definition-3DRenderer/High-Definition-3DRenderer/Build/CMakeFiles/install/strip.dir
