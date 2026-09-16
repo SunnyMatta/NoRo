@@ -3,7 +3,6 @@
 #include <keybind.h>
 #include <data.h>
 #include <mesh.h>
-#include <userdata.h>
 
 Camera localcamera = {{0.0f, 0.0f, 5.0f}, 0.0f, -90.0f, {0.0f, 0.0f, -1.0f}, {0.0f, 1.0f, 0.0f}}; // Initial camera position and orientation
 

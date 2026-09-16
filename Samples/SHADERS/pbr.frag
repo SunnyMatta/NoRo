@@ -27,8 +27,6 @@ uniform int u_LightCount;
 const float PI = 3.14159265359;
 const vec2 invAtan = vec2(0.1591, 0.3183);
 
-// 1. Distribution Function (D) - Trowbridge-Reitz GGX
-// Determines how aligned the microfacets are to the halfway vector.
 float DistributionGGX(vec3 N, vec3 H, float roughness) {
     float a = roughness * roughness;
     float a2 = a * a;
@@ -47,8 +45,6 @@ vec2 SampleSphericalMap(vec3 v) {
     return uv;
 }
 
-// 2. Geometry Function (G) - Smith's Schlick-GGX
-// Simulates microfacets shadowing each other.
 float GeometrySchlickGGX(float NdotV, float roughness) {
     float r = (roughness + 1.0);
     float k = (r * r) / 8.0;
@@ -58,28 +54,22 @@ float GeometrySmith(vec3 N, vec3 V, vec3 L, float roughness) {
     return GeometrySchlickGGX(max(dot(N, V), 0.0), roughness) * GeometrySchlickGGX(max(dot(N, L), 0.0), roughness);
 }
 
-// 3. Fresnel Equation (F) - Schlick's Approximation
-// Calculates reflection vs refraction ratio.
 vec3 fresnelSchlick(float cosTheta, vec3 F0) {
     return F0 + (1.0 - F0) * pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
 }
 
 float ShadowCalculation(vec4 fragPosLightSpace) {
-    // Perform perspective divide
     vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
-    // Transform to [0,1] range
     projCoords = projCoords * 0.5 + 0.5;
 
-    // Keep shadow at 0.0 if outside the far plane of the light's frustum
+    //keep shadow at 0.0 if outside the far plane of the light's frustum
     if(projCoords.z > 1.0)
         return 0.0;
 
-    // Get closest depth value from light's perspective
+    //closest depth value from light's perspective
     float closestDepth = texture(u_ShadowMap, projCoords.xy).r;
-    // Get current fragment's depth relative to light
     float currentDepth = projCoords.z;
 
-    // Simple bias to prevent shadow acne
     float bias = 0.005;
     float shadow = currentDepth - bias > closestDepth ? 1.0 : 0.0;
 
@@ -87,11 +77,11 @@ float ShadowCalculation(vec4 fragPosLightSpace) {
 }
 
 void main() {
-    // Material Properties
+    //material Properties
     vec3 albedo = pow(texture(u_AlbedoMap, TexCoords).rgb, vec3(2.2));
     vec3 orm = texture(u_ORMMap, TexCoords).rgb;
-    //float ao = orm.r;
-    float ao = 1;
+    float ao = orm.r;
+    //float ao = 1;
     float roughness = orm.g;
     float metallic = orm.b;
 
@@ -99,7 +89,7 @@ void main() {
     vec3 N = normalize(TBN * (texture(u_NormalMap, TexCoords).rgb * 2.0 - 1.0));
     vec3 V = normalize(u_CamPos - WorldPos);
 
-    // Calculate base reflectivity
+    //calculate base reflectivity
     vec3 F0 = vec3(0.04);
     F0 = mix(F0, albedo, metallic);
 
@@ -142,7 +132,7 @@ void main() {
 
     vec3 color = ambient + Lo + emissive;
 
-    // HDR Tone Mapping (ACES is more realistic than Reinhard)
+    // HDR Tone Mapping
     color = color / (color + vec3(1.0));
     // Gamma Correction
     color = pow(color, vec3(1.0/2.2));

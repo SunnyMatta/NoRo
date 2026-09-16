@@ -1,17 +1,22 @@
 
 # NoRo. Framework
-NoRo (Row Notation) Is a Lightweight, High-Performance Graphical Framework Written in C with memory safety. Built on top of GLTF.
+NoRo (Row Notation) Is a Lightweight, High-Performance Graphical Framework Written in C with memory management. Built on top of GLTF.
+
 ![damaged_helmet example](images/1.png)
 ![sponza example](images/2.png)
 ## Core Features
 
-* **Modern Texture Streaming:** Integrated `libktx` pipeline to load KTX2 supercompressed textures (Basis Universal/UASTC) directly into GPU VRAM, minimizing runtime transcoding overhead.
-* **glTF 2.0 Asset Compliance:** Full PBR material mapping, skeletal hierarchy tracking, and mesh rendering leveraging `cgltf` and `cglm` math utilities.
+- Texture Streaming: 
+    - Integrated `libktx` pipeline to load KTX2 supercompressed textures (Basis Universal/UASTC) directly into GPU VRAM, minimizing runtime transcoding overhead.
+- glTF 2.0 Asset load:
+    - Full PBR material mapping and mesh rendering using `cgltf` for parsing
+
+## Demo
+[Demo video (youtube)](https://youtu.be/GX43e0w-IgY)
 
 ## Dependencies
 
-Download KTX2 dev-tools from Khronos's Github Repository:
-https://github.com/KhronosGroup/KTX-Software/releases
+Firstly, install KTX2 Library from [Khronos's Github Repository](https://github.com/KhronosGroup/KTX-Software/releases)
 
 **For Fedora:**
 
@@ -25,11 +30,15 @@ https://github.com/KhronosGroup/KTX-Software/releases
 
     sudo pacman -S glfw glew
 
-## Usage
-This framework is headers only based.
-Just copy `NoRo/` and `#include "NoRo/init.h"`
+## Getting Started
+In order to get started, please check `Samples/main.c`
 
-Also, target libraries `-lGL -lglfw -lm -lGLEW -lktx`
+### Build
+
+`cmake -S . -B ./Build`
+
+`cmake --build ./Build`
+
 
 ## Third-Party Licenses
 **Thanks** to everyone who made/maintaining these repositories!
@@ -38,5 +47,5 @@ Also, target libraries `-lGL -lglfw -lm -lGLEW -lktx`
 
 `cgltf` by [jkuhlmann](https://github.com/jkuhlmann) (https://github.com/jkuhlmann/cgltf) "MIT LICENSE"
 
-
+`stb` by [nothings](https://github.com/nothings) (https://github.com/nothings/stb/) "MIT LICENSE & Public Domain"
 

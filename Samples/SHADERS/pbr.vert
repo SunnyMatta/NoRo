@@ -24,7 +24,6 @@ void main() {
     vec3 B = cross(N, T);
     TBN = mat3(T, B, N);
 
-    // Transform world position to light's perspective
     FragPosLightSpace = u_LightSpaceMatrix * vec4(WorldPos, 1.0);
 
     gl_Position = projection * view * vec4(WorldPos, 1.0);

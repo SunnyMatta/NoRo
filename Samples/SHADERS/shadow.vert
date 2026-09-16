@@ -6,6 +6,6 @@ uniform mat4 model;
 
 void main()
 {
-    // Transform the vertex into world space, then into light-view space
+    //transform the vertex into world space
     gl_Position = u_LightSpaceMatrix * model * vec4(aPos, 1.0);
 }

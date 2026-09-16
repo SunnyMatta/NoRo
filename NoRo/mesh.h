@@ -1,6 +1,5 @@
 #pragma once
 
-#include "userdata.h"
 #include <data.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -62,6 +61,8 @@ typedef struct {
     GLuint albedomap;
     GLuint normalmap;
     GLuint ormmap;
+    GLuint RoughtnessMap;
+    GLuint MetallicMap;
     GLuint emissivemap;
 
     float basecolor[4];
@@ -310,14 +311,15 @@ material* InitMaterial(cgltf_data* data, const char* modpath, int* out){
         if(mat->has_pbr_metallic_roughness){
             cgltf_texture* texture = mat->pbr_metallic_roughness.metallic_roughness_texture.texture;
             cgltf_image* image = GetImgExtension(texture);
-                if (image) {
+            if (image) {
                 glmat->ormmap = TranscodeKTX2(*image, modpath, 0);
-                    if (glmat->ormmap) {
+                if (glmat->ormmap) {
                     glBindTexture(GL_TEXTURE_2D, glmat->ormmap);
                     GLApplySampler(texture);
-                    }
+                }
             }
         }
+
 
         if (mat->emissive_texture.texture) {
             cgltf_texture* texture = mat->emissive_texture.texture;
@@ -342,47 +344,6 @@ void MeshOperator4fv(GLuint program, GLint uniform, mat4 Model, vec3 Position, f
     glm_scale_uni(Model, scale);
     GLint Uniform = glGetUniformLocation(program, "model");
     glUniformMatrix4fv(uniform, 1, GL_FALSE, (float*)Model);
-}
-// This code was used for rendering randomly generated flat using perlin-like noise.  
-model InitMesh(Vertex* vertices, int vc, uint32_t *indices, int ic){
-    model m;
-    m.count = 1;
-    m.primitives = (meshdata*)malloc(sizeof(meshdata) * m.count);
-
-    m.primitives[0].index_count = ic;
-    m.primitives[0].index_type = GL_UNSIGNED_INT;
-    m.primitives[0].draw_mode = GL_TRIANGLES;
-
-    m.primitives[0].vbos_count = 1;
-    m.primitives[0].vbos = (GLuint*)malloc(sizeof(GLuint) * 1);
-
-    glGenVertexArrays(1, &m.primitives[0].vao);
-    glGenBuffers(1,&m.primitives[0].ebo);
-    glGenBuffers(1,m.primitives[0].vbos);
-
-    glBindVertexArray(m.primitives[0].vao);
-
-    glBindBuffer(GL_ARRAY_BUFFER, m.primitives[0].vbos[0]);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * vc, vertices, GL_STATIC_DRAW);
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m.primitives[0].ebo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint32_t) * ic, indices, GL_STATIC_DRAW);
-
-    glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE,3 * sizeof(Vertex), (void*)0);
-    glEnableVertexAttribArray(0);
-
-    glVertexAttribPointer(1,3,GL_FLOAT,GL_FALSE,3 * sizeof(Vertex), (void*)(3 * sizeof(float)));
-    glEnableVertexAttribArray(1);
-
-    glVertexAttribPointer(2,2,GL_FLOAT,GL_FALSE,3 *sizeof(Vertex), (void*)(6 * sizeof(float)));
-    glEnableVertexAttribArray(2);
-
-    glBindVertexArray(0);
-
-    if(m.primitives[0].vao != 0){
-        return m;
-    }
-    printf("model init error");
 }
 
 // Name is telling
@@ -574,7 +535,7 @@ model LoadMesh(const char* filepath) {
 //}
 
 
-void DrawMesh(model* m, GLuint program, unsigned int HDR) {
+void DrawMesh(model* m, GLuint program) {
     glUniform1i(glGetUniformLocation(program, "u_LightCount"), m->lightcount);
 
     for (int i = 0; i < m->lightcount; ++i) {
@@ -598,12 +559,6 @@ void DrawMesh(model* m, GLuint program, unsigned int HDR) {
 #endif
         glUniformMatrix4fv(modelloc, 1, GL_FALSE, (float*)data->transform);
 
-        if(HDR != 0){
-            glActiveTexture(GL_TEXTURE5);
-            glBindTexture(GL_TEXTURE_2D, HDR);
-            glUniform1i(glGetUniformLocation(program, "u_EnvMap"), 5);
-        }else{
-
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, data->albedomap);
         glUniform1i(glGetUniformLocation(program, "u_AlbedoMap"), 0);
@@ -623,8 +578,6 @@ void DrawMesh(model* m, GLuint program, unsigned int HDR) {
         glActiveTexture(GL_TEXTURE4);
         glBindTexture(GL_TEXTURE_2D, shadowmap);
         glUniform1i(glGetUniformLocation(program,"u_ShadowMap") , 4);
-
-        }
 
         glBindVertexArray(data->vao);
         

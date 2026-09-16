@@ -19,8 +19,8 @@ It also can contain global variables that are shared across multiple headers/sou
 #include <stdlib.h>
 #include <string.h>
 
-# define HEIGHT 600 // Default window height
-# define WIDTH 800 // Default window width
+uint32_t HEIGHT = 700; // Default window height
+uint32_t WIDTH = 1300; // Default window width
 
 // Camera structure to hold position and orientation
 typedef struct {
@@ -62,7 +62,7 @@ unsigned int Load_HDRenv(const char* filepath){
     int width, height, nrComp;
     float *data= stbi_loadf(filepath, &width, &height, &nrComp, 0);
 
-    if (!data){
+    if (data == 0){
         fprintf(stderr, "HDRenv fetch fail");
         return 0;
     }

@@ -6,7 +6,7 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 
 include_directories(NoRo/)
 
-add_executable(NoRo src/main.c)
+add_executable(NoRo Samples/main.c)
 
 target_compile_definitions(NoRo PRIVATE NoRo_DEBUG_ON)
 

@@ -8,8 +8,7 @@ uniform mat4 view;
 
 void main() {
     LocalPos = aPos;
-    // Strip camera translation so the skybox stays centered around the player
     mat4 rotView = mat4(mat3(view));
     vec4 clipPos = projection * rotView * vec4(aPos, 1.0);
-    gl_Position = clipPos.xyww; // Force depth to max (1.0) to render behind everything
+    gl_Position = clipPos.xyww;
 }

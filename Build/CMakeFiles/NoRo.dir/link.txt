@@ -1,0 +1,1 @@
+/usr/bin/cc -Wl,--dependency-file=CMakeFiles/NoRo.dir/link.d CMakeFiles/NoRo.dir/Samples/main.c.o -o NoRo  -lGL -lglfw -lm -lGLEW -lktx
