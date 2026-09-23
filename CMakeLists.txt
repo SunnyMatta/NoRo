@@ -25,7 +25,7 @@ target_link_libraries(NoRo PRIVATE OpenGL::GL glfw m GLEW::GLEW ktx)
 
 add_executable(NoRo-Tests Tests/test.c)
 target_compile_definitions(NoRo-Tests PRIVATE NoRo_TEST)
-target_link_libraries(NoRo-Tests PRIVATE GL glfw m GLEW ktx)
+target_link_libraries(NoRo-Tests PRIVATE OpenGL::GL glfw m GLEW::GLEW ktx)
 
 add_test(NAME NoRoTest COMMAND NoRo-Tests)
 
