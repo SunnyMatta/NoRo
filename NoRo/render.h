@@ -3,6 +3,7 @@
 #include <keybind.h>
 #include <data.h>
 #include <mesh.h>
+#include <stdlib.h>
 
 Camera localcamera = {{0.0f, 0.0f, 5.0f}, 0.0f, -90.0f, {0.0f, 0.0f, -1.0f}, {0.0f, 1.0f, 0.0f}}; // Initial camera position and orientation
 
@@ -26,7 +27,7 @@ void ProjectionSetup(GLFWwindow* window, int width, int height, GLuint Program) 
     mat4 projection;
 
     //glm_ortho(0.0f, 800.0f, 0.0f, 600.0f, 0.1f, 100.0f, projection);
-    
+
     glm_perspective(glm_rad(45.0f), (float)width / (float)height, 0.1f, 100.0f, projection);
     glUseProgram(Program);
     GLint projectionlocation = glGetUniformLocation(Program, "projection");
@@ -55,7 +56,7 @@ GLuint prepshader(const char* vert, const char* frag){
     if (!success) {
         glGetShaderInfoLog(vs,512,NULL,infolog);
         printf("Vertex Shader didn't compiled\n%s\n",infolog);
-        
+        exit(-1);
     }
 
     GLuint fs = glCreateShader(GL_FRAGMENT_SHADER);
@@ -66,7 +67,7 @@ GLuint prepshader(const char* vert, const char* frag){
     if (!success) {
         glGetShaderInfoLog(fs,512,NULL,infolog);
         printf("Fragment Shader didn't compiled\n%s\n",infolog);
-        
+        exit(-1);
     }
 
     GLuint prog = glCreateProgram();
@@ -77,6 +78,7 @@ GLuint prepshader(const char* vert, const char* frag){
     if (!success) {
         glGetProgramInfoLog(prog, 512, NULL, infolog);
         printf("Shader Program Didn't created\n%s\n", infolog);
+        exit(-1);
     }
 
     glDeleteShader(vs);
@@ -85,7 +87,7 @@ GLuint prepshader(const char* vert, const char* frag){
     free(vertex);
 
     return prog;
-} 
+}
 
 float lastframe = 0.0f;
 

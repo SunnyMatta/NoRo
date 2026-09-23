@@ -52,7 +52,7 @@ typedef struct{
 
     mat4* instances;
 
-    
+
 } model;
 
 //Data for global materials
@@ -205,7 +205,7 @@ GLuint TranscodeKTX2(cgltf_image image, const char* model, int srgb){
     glBindTexture(GL_TEXTURE_2D, gltex);
 
     for (uint32_t level = 0; level < texture->numLevels; level++) {
-        size_t offset = 0; 
+        size_t offset = 0;
         ktxTexture_GetImageOffset(ktxTexture(texture), level, 0, 0, &offset);
 
         uint32_t mip_width = texture->baseWidth >> level;
@@ -261,7 +261,7 @@ void GLApplySampler(cgltf_texture* texture){
         if (texture->sampler->wrap_t) {
             wrapt = texture->sampler->wrap_t;
         }
-        
+
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minfilter);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magfilter);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wraps);
@@ -356,9 +356,9 @@ model LoadMesh(const char* filepath) {
 
     cgltf_data* data = NULL;
     options.json_token_count = 0; // Let the library determine the token count
-    
+
     cgltf_result result = cgltf_parse_file(&options, filepath, &data); // Parse the glTF file
-    
+
     if (result != cgltf_result_success) {
         fprintf(stderr, "Failed to load glTF file: %s\n", filepath);
         return (model){0};
@@ -400,7 +400,7 @@ model LoadMesh(const char* filepath) {
         cgltf_node_transform_world(node, (float*)localtrans);
 
         if (node->mesh) {
-    
+
         for (size_t j = 0; j < node->mesh->primitives_count; ++j) {
             cgltf_primitive* primitive = &node->mesh->primitives[j];
             meshdata* m = &map.primitives[prim_index++];
@@ -414,7 +414,7 @@ model LoadMesh(const char* filepath) {
                 m->ormmap = loadedmaterials[mat_idx].ormmap;
                 m->emissivemap = loadedmaterials[mat_idx].emissivemap    ;
             }
-            
+
             glGenVertexArrays(1, &m->vao);
             glBindVertexArray(m->vao);
 
@@ -443,7 +443,7 @@ model LoadMesh(const char* filepath) {
             }else {
             m->index_count = 0;
             }
-            
+
             for (size_t k = 0; k < primitive->attributes_count; ++k) {
                 cgltf_attribute* attr = &primitive->attributes[k];
                 cgltf_accessor* acc = attr->data;
@@ -484,28 +484,28 @@ model LoadMesh(const char* filepath) {
 
                     glVertexAttribPointer(location, count, mapcomponenttype(acc->component_type), acc->normalized, acc->stride, (void*)0);
 
-                 }       
+                 }
             }
 
         }}
         if (node->light != NULL && map.lightcount < 32) {
             light* l = &map.lights[map.lightcount++];
-            
+
             mat4 wrdmat;
-            
+
             cgltf_node_transform_world(node, (float*)wrdmat);
             l->pos[0] = wrdmat[3][0];
             l->pos[1] = wrdmat[3][1];
             l->pos[2] = wrdmat[3][2];
-                        
+
             if (node->light) {
                 glm_vec3_copy(node->light->color, l->col);
                 l->inten = node->light->intensity * 0.001;
             }
-            
+
         }
         if (node->camera) {
-        
+
         }
     }
     glBindVertexArray(0);
@@ -523,7 +523,7 @@ model LoadMesh(const char* filepath) {
 //    glm_mat4_identity(m->modelmatrix);
 //}
 
-//void modelupdate(model* m){   
+//void modelupdate(model* m){
 //    glm_mat4_identity(m->modelmatrix);
 //
 //    glm_translate(m->modelmatrix, m->position);
@@ -542,10 +542,10 @@ void DrawMesh(model* m, GLuint program) {
         char buffer[64];
         sprintf(buffer, "u_Lights[%d].position" , i);
         glUniform3fv(glGetUniformLocation(program, buffer), 1, m->lights[i].pos);
-    
+
         sprintf(buffer, "u_Lights[%d].color" , i);
         glUniform3fv(glGetUniformLocation(program, buffer), 1, m->lights[i].col);
-    
+
         sprintf(buffer, "u_Lights[%d].intensity" , i);
         glUniform1f(glGetUniformLocation(program, buffer), m->lights[i].inten);
     }
@@ -566,7 +566,7 @@ void DrawMesh(model* m, GLuint program) {
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, data->normalmap);
         glUniform1i(glGetUniformLocation(program, "u_NormalMap"), 1);
-        
+
         glActiveTexture(GL_TEXTURE2);
         glBindTexture(GL_TEXTURE_2D, data->ormmap);
         glUniform1i(glGetUniformLocation(program, "u_ORMMap"), 2);
@@ -574,13 +574,13 @@ void DrawMesh(model* m, GLuint program) {
         glActiveTexture(GL_TEXTURE3);
         glBindTexture(GL_TEXTURE_2D, data->emissivemap);
         glUniform1i(glGetUniformLocation(program,"u_EmissiveMap") , 3);
-        
+
         glActiveTexture(GL_TEXTURE4);
         glBindTexture(GL_TEXTURE_2D, shadowmap);
         glUniform1i(glGetUniformLocation(program,"u_ShadowMap") , 4);
 
         glBindVertexArray(data->vao);
-        
+
         if (data->index_count > 0) {
             glDrawElements(GL_TRIANGLES, (GLsizei)data->index_count, data->index_type, 0);
         }
@@ -605,7 +605,7 @@ void CleanupMesh(model* m) {
         if (mesh->vbos) {
             glDeleteBuffers((GLsizei)mesh->vbos_count, mesh->vbos);
             free(mesh->vbos);
-            mesh->vbos = NULL;   
+            mesh->vbos = NULL;
         }
 
         if (mesh->ebo) {

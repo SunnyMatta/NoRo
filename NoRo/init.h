@@ -5,6 +5,7 @@
 #include <render.h>
 #include <mesh.h>
 
+static inline void CLEANUP(GLFWwindow* window);
 
 static inline int INIT(GLFWwindow** window) {
     if (!glfwInit()) {
@@ -15,8 +16,10 @@ static inline int INIT(GLFWwindow** window) {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    #ifdef NoRo_TEST
+    glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
+    #endif
 
-    
     *window = glfwCreateWindow(WIDTH, HEIGHT, "NoRo", NULL, NULL);
     if (!*window) {
         fprintf(stderr, "Failed to create window\n");

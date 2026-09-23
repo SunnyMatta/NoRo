@@ -31,14 +31,11 @@ Firstly, install KTX2 Library from [Khronos's Github Repository](https://github.
     sudo pacman -S glfw glew
 
 ## Getting Started
-In order to get started, please check `Samples/main.c`
+In order to get started, please check `Example/main.c`
 
-### Build
+### Demo
 
-`cmake -S . -B ./Build`
-
-`cmake --build ./Build`
-
+Execute `run.sh/bat` for demo
 
 ## Third-Party Licenses
 **Thanks** to everyone who made/maintaining these repositories!
@@ -48,4 +45,3 @@ In order to get started, please check `Samples/main.c`
 `cgltf` by [jkuhlmann](https://github.com/jkuhlmann) (https://github.com/jkuhlmann/cgltf) "MIT LICENSE"
 
 `stb` by [nothings](https://github.com/nothings) (https://github.com/nothings/stb/) "MIT LICENSE & Public Domain"
-
