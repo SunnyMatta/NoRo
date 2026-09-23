@@ -1,6 +1,6 @@
 
 # NoRo. Framework
-NoRo (Row Notation) Is a Lightweight, High-Performance Graphical Framework Written in C with memory management. Built on top of GLTF.
+NoRo (Row Notation) Is a Lightweight, High-Performance Graphical Framework Written in C with memory management. Built on top of GLfw.
 
 ![damaged_helmet example](images/1.png)
 ![sponza example](images/2.png)
