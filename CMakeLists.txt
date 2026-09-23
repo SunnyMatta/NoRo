@@ -13,13 +13,15 @@ file(CREATE_LINK
     SYMBOLIC
 )
 
-
+find_package(OpenGL REQUIRED)
+find_package(glfw3 REQUIRED)
+find_package(GLEW REQUIRED)
 
 include_directories(NoRo/)
 
 add_executable(NoRo Example/main.c)
 target_compile_definitions(NoRo PRIVATE NoRo_DEBUG_ON)
-target_link_libraries(NoRo PRIVATE GL glfw m GLEW ktx)
+target_link_libraries(NoRo PRIVATE OpenGL::GL glfw m GLEW::GLEW ktx)
 
 add_executable(NoRo-Tests Tests/test.c)
 target_compile_definitions(NoRo-Tests PRIVATE NoRo_TEST)
