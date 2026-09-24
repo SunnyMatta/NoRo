@@ -18,16 +18,17 @@ file(CREATE_LINK
 find_package(OpenGL REQUIRED)
 find_package(glfw3 REQUIRED)
 find_package(GLEW REQUIRED)
-find_library(MATH_LIBRARY m)
-if(MATH_LIBRARY)
-    target_link_libraries(NoRo PRIVATE ${MATH_LIBRARY})
-endif()
+
 
 include_directories(NoRo/)
 
 add_executable(NoRo Example/main.c)
 target_compile_definitions(NoRo PRIVATE NoRo_DEBUG_ON)
-target_link_libraries(NoRo PRIVATE OpenGL::GL glfw m GLEW::GLEW ktx)
+target_link_libraries(NoRo PRIVATE OpenGL::GL glfw GLEW::GLEW ktx)
+find_library(MATH_LIBRARY m)
+if(MATH_LIBRARY)
+    target_link_libraries(NoRo PRIVATE m)
+endif()
 
 add_executable(NoRo-Tests Tests/test.c)
 target_compile_definitions(NoRo-Tests PRIVATE NoRo_TEST)
