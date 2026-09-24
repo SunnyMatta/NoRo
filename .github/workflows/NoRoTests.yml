@@ -63,23 +63,25 @@ jobs:
     - name: Linux - Configure Project
       if: runner.os == 'Linux'
       run: |
-          cmake -S . -B ${{ steps.strings.outputs.build-output-dir }}
+          cmake -S . -B ${{ steps.strings.outputs.build-output-dir }} \
+            -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }} \
+            -DCMAKE_C_COMPILER=${{ matrix.c_compiler }} \
             -DCMAKE_BUILD_TYPE=\${{ matrix.build_type }}
             
     - name: Windows - Configure Project
       if: runner.os == 'Windows'
       shell: pwsh
       run: |
-          cmake -S . -B "\$build_dir" `
-            -DCMAKE_BUILD_TYPE=\${{ matrix.build_type }} `
-            -DCMAKE_CXX_COMPILER=cl `
-            -DCMAKE_C_COMPILER=cl `
-            -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake" `
+          cmake -S . -B "\$build_dir" \
+            -DCMAKE_BUILD_TYPE=\${{ matrix.build_type }} \
+            -DCMAKE_CXX_COMPILER=cl \
+            -DCMAKE_C_COMPILER=cl \
+            -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake" \
             -DVCPKG_TARGET_TRIPLET=x64-windows
         
-    - name: Linux - Build
-      run: cmake --build ${{ github.workspace }}/build --config ${{ matrix.build_type }}
+    - name: Build
+      run: cmake --build "$build_dir" --config ${{ matrix.build_type }}
       
     - name: Test
       working-directory: ${{ github.workspace }}
-      run: ctest --build-config ${{ matrix.build_type }}
+      run: ctest --test-dir "$build_dir" --build-config ${{ matrix.build_type }}
