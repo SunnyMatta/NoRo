@@ -77,7 +77,8 @@ jobs:
             -DCMAKE_CXX_COMPILER=cl \
             -DCMAKE_C_COMPILER=cl \
             -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake" \
-            -DVCPKG_TARGET_TRIPLET=x64-windows
+            -DVCPKG_TARGET_TRIPLET=x64-windows \
+            -DVCPKG_MANIFEST_MODE=OFF
         
     - name: Build
       run: cmake --build ${{ github.workspace }}/build --config ${{ matrix.build_type }}
