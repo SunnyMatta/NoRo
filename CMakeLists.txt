@@ -13,28 +13,36 @@ file(CREATE_LINK
     SYMBOLIC
 )
 
-
-
 find_package(OpenGL REQUIRED)
 find_package(glfw3 REQUIRED)
 find_package(GLEW REQUIRED)
 
-
 include_directories(NoRo/)
 
 add_executable(NoRo Example/main.c)
+add_executable(NoRo-Tests Tests/test.c)
+
 target_compile_definitions(NoRo PRIVATE NoRo_DEBUG_ON)
-target_link_libraries(NoRo PRIVATE OpenGL::GL glfw GLEW::GLEW ktx)
-find_library(MATH_LIBRARY m)
-if(MATH_LIBRARY)
-    target_link_libraries(NoRo PRIVATE m)
+target_compile_definitions(NoRo-Tests PRIVATE NoRo_TEST)
+
+target_link_libraries(NoRo PRIVATE OpenGL::GL glfw GLEW::GLEW)
+target_link_libraries(NoRo-Tests PRIVATE OpenGL::GL glfw GLEW::GLEW)
+
+if(WIN32)
+
+    find_package(Ktx CONFIG REQUIRED)
+
+    target_link_libraries(NoRo PRIVATE KTX::ktx)
+    target_link_libraries(NoRo-Tests PRIVATE KTX::ktx)
+
+else()
+    target_link_libraries(NoRo PRIVATE ktx)
+    target_link_libraries(NoRo-Tests PRIVATE ktx)
+
 endif()
 
-add_executable(NoRo-Tests Tests/test.c)
-target_compile_definitions(NoRo-Tests PRIVATE NoRo_TEST)
-target_link_libraries(NoRo-Tests PRIVATE OpenGL::GL glfw GLEW::GLEW ktx)
-find_library(MATH_LIBRARY m)
 if(MATH_LIBRARY)
+    target_link_libraries(NoRo PRIVATE m)
     target_link_libraries(NoRo-Tests PRIVATE m)
 endif()
 
