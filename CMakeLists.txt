@@ -29,16 +29,13 @@ target_link_libraries(NoRo PRIVATE OpenGL::GL glfw GLEW::GLEW)
 target_link_libraries(NoRo-Tests PRIVATE OpenGL::GL glfw GLEW::GLEW)
 
 if(WIN32)
-
     find_package(Ktx CONFIG REQUIRED)
 
     target_link_libraries(NoRo PRIVATE KTX::ktx)
     target_link_libraries(NoRo-Tests PRIVATE KTX::ktx)
-
 else()
     target_link_libraries(NoRo PRIVATE ktx)
     target_link_libraries(NoRo-Tests PRIVATE ktx)
-
 endif()
 
 if(NOT WIN32)

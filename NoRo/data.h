@@ -2,10 +2,11 @@
 
 /*
 2026-02-13
-data.H file contains all the necessary includes for the project.
 
+data.H file contains all the necessary includes for the project.
 It also can contain global variables that are shared across multiple headers/sources.
 
+Heavy changes for this file will be pushed later :3
 */
 
 #define STB_IMAGE_IMPLEMENTATION
@@ -29,13 +30,6 @@ typedef struct {
     vec3 front; // Camera front vector
     vec4 up; // Camera up vector
 } Camera;
-
-typedef struct {
-    mat4 Model;
-    vec3 Position;
-    float Scale;
-}Object;
-//
 
 char* filetostring(const char* filepath) {
     FILE* file = fopen(filepath, "rb");
@@ -90,9 +84,6 @@ unsigned int Load_HDRenv(const char* filepath){
     stbi_image_free(data);
     return hdrtex;
 }
-
-
-
 
 // Global variables
 GLFWwindow* window = NULL;

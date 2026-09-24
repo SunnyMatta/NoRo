@@ -1,6 +1,6 @@
 #include <init.h>
 /*.
-    THIS FILE IS JUST EXAMPLE! DO NOT USE IT WITHOUT MODIFICATIONS
+    THIS FILE IS JUST EXAMPLE!
 */
 
 #define PBRV "Example/SHADERS/pbr.vert"
