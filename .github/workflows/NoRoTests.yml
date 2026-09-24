@@ -41,17 +41,15 @@ jobs:
       if: runner.os == 'Linux'
       run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential cmake xorg-dev libglu1-mesa-dev libglfw3-dev xvfb libglew-dev
+          sudo apt-get install -y build-essential cmake xorg-dev libglu1-mesa-dev libglfw3-dev xvfb libglew-dev wget
+          wget https://github.com/KhronosGroup/KTX-Software/releases/download/v4.4.2/KTX-Software-4.4.2-Linux-x86_64.deb
+          sudo apt-get install ./KTX-Software-4.4.2-Linux-x86_64.deb
 
     - name: Windows - Setting up dependencies and OpenGL
       if: runner.os == 'Windows'
       shell: bash
       run: |
-        git clone --depth 1 https://github.com/glfw/glfw.git
-        cd glfw
-        cmake -B build -DBUILD_SHARED_LIBS=OFF -DGLFW_BUILD_EXAMPLES=OFF -DGLFW_BUILD_TESTS=OFF -DGLFW_BUILD_DOCS=OFF -DCMAKE_INSTALL_PREFIX=../glfw_install
-        cmake --build build --config Release
-        cmake --install build --config Release
+        $VCPKG_INSTALLATION_ROOT/vcpkg install glfw3:x64-windows
 
     - name: Set reusable strings
       # Turn repeated input strings (such as the build output directory) into step outputs. These step outputs can be used throughout the workflow file.
@@ -74,7 +72,7 @@ jobs:
       
     - name: Windows - Build
       if: runner.os == 'Windows'
-      run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }} -Dglfw3_DIR="\${{ github.workspace }}/glfw_install/lib/cmake/glfw3
+      run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }} -DCMAKE_TOOLCHAIN_FILE="$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake"
 
     - name: Test
       working-directory: ${{ steps.strings.outputs.build-output-dir }}
