@@ -50,6 +50,8 @@ jobs:
       shell: bash
       run: |
         $VCPKG_INSTALLATION_ROOT/vcpkg install glfw3:x64-windows
+        $VCPKG_INSTALLATION_ROOT/vcpkg install ktx:x64-windows
+        $VCPKG_INSTALLATION_ROOT/vcpkg install glew:x64-windows
 
     - name: Set reusable strings
       # Turn repeated input strings (such as the build output directory) into step outputs. These step outputs can be used throughout the workflow file.
@@ -63,19 +65,13 @@ jobs:
         cmake -B ${{ steps.strings.outputs.build-output-dir }}
         -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }}
         -DCMAKE_C_COMPILER=${{ matrix.c_compiler }}
+        ${{ runner.os == 'Windows' && format('-DCMAKE_TOOLCHAIN_FILE="{0}/scripts/buildsystems/vcpkg.cmake" -DVCPKG_TARGET_TRIPLET=x64-windows', env.VCPKG_INSTALLATION_ROOT) || '' }}
         -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
         -S ${{ github.workspace }}
 
     - name: Linux - Build
-      if: runner.os == 'Linux'
-      run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }}
+      run: cmake --build ${{ github.workspace }} --config ${{ matrix.build_type }}
       
-    - name: Windows - Build
-      if: runner.os == 'Windows'
-      run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }} -DCMAKE_TOOLCHAIN_FILE="$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake"
-
     - name: Test
-      working-directory: ${{ steps.strings.outputs.build-output-dir }}
-      # Execute tests defined by the CMake configuration. Note that --build-config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
-      # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
+      working-directory: ${{ github.workspace }}
       run: ctest --build-config ${{ matrix.build_type }}
