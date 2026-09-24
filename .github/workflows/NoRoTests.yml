@@ -61,16 +61,26 @@ jobs:
       run: |
         echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
 
-    - name: Configure CMake
+    - name: Linux - Configure Project
+      if: runner.os == 'Linux'
+      run: |
+          cmake -S . -B ${{ steps.strings.outputs.build-output-dir }}
+            -DCMAKE_BUILD_TYPE=\${{ matrix.build_type }}
+            
+    - name: Windows - Configure Project
+      if: runner.os == 'Windows'
       shell: pwsh
-      run: >
-        cmake -B "\${{ steps.strings.outputs.build-output-dir }}"
-        -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }}
-        -DCMAKE_C_COMPILER=${{ matrix.c_compiler }}
-        ${{ runner.os == 'Windows' && format('-DCMAKE_TOOLCHAIN_FILE="{0}/scripts/buildsystems/vcpkg.cmake" -DVCPKG_TARGET_TRIPLET=x64-windows', env.VCPKG_INSTALLATION_ROOT) || '' }}
-        -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
-        -S ${{ github.workspace }}
+      run: |
+          \(build_dir = "\){{ steps.strings.outputs.build-output-dir }}".Replace('\', '/')
+          \(vcpkg_path = "\)env:VCPKG_INSTALLATION_ROOT".Replace('\', '/')
 
+          cmake -S . -B "\$build_dir" `
+            -DCMAKE_BUILD_TYPE=\${{ matrix.build_type }} `
+            -DCMAKE_CXX_COMPILER=cl `
+            -DCMAKE_C_COMPILER=cl `
+            -DCMAKE_TOOLCHAIN_FILE="$vcpkg_path/scripts/buildsystems/vcpkg.cmake" `
+            -DVCPKG_TARGET_TRIPLET=x64-windows
+        
     - name: Linux - Build
       run: cmake --build ${{ github.workspace }}/build --config ${{ matrix.build_type }}
       
