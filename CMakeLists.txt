@@ -13,6 +13,8 @@ file(CREATE_LINK
     SYMBOLIC
 )
 
+
+
 find_package(OpenGL REQUIRED)
 find_package(glfw3 REQUIRED)
 find_package(GLEW REQUIRED)
@@ -27,7 +29,12 @@ add_executable(NoRo-Tests Tests/test.c)
 target_compile_definitions(NoRo-Tests PRIVATE NoRo_TEST)
 target_link_libraries(NoRo-Tests PRIVATE OpenGL::GL glfw m GLEW::GLEW ktx)
 
+
 add_test(NAME NoRoTest COMMAND NoRo-Tests)
+
+set_tests_properties(NoRoTest PROPERTIES
+    WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+)
 
 include(GNUInstallDirs)
 install(TARGETS NoRo
