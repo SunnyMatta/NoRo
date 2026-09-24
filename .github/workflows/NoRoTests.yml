@@ -72,7 +72,7 @@ jobs:
       if: runner.os == 'Windows'
       shell: pwsh
       run: |
-          cmake -S . -B "\$build_dir" \
+          cmake -S . -B ${{ github.workspace }}/build \
             -DCMAKE_BUILD_TYPE=\${{ matrix.build_type }} \
             -DCMAKE_CXX_COMPILER=cl \
             -DCMAKE_C_COMPILER=cl \
@@ -80,8 +80,8 @@ jobs:
             -DVCPKG_TARGET_TRIPLET=x64-windows
         
     - name: Build
-      run: cmake --build "$build_dir" --config ${{ matrix.build_type }}
+      run: cmake --build ${{ github.workspace }}/build --config ${{ matrix.build_type }}
       
     - name: Test
       working-directory: ${{ github.workspace }}
-      run: ctest --test-dir "$build_dir" --build-config ${{ matrix.build_type }}
+      run: ctest --test-dir ${{ github.workspace }}/build --build-config ${{ matrix.build_type }}
