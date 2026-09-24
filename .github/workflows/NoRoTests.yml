@@ -71,18 +71,23 @@ jobs:
     - name: Windows - Configure Project
       if: runner.os == 'Windows'
       shell: pwsh
+      
       run: |
-          cmake -S . -B ${{ github.workspace }}/build \
-            -DCMAKE_BUILD_TYPE=\${{ matrix.build_type }} \
-            -DCMAKE_CXX_COMPILER=cl \
-            -DCMAKE_C_COMPILER=cl \
-            -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake" \
-            -DVCPKG_TARGET_TRIPLET=x64-windows \
+          cmake -S . -B ${{ github.workspace }}/build `
+            -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} `
+            -DCMAKE_CXX_COMPILER=cl `
+            -DCMAKE_C_COMPILER=cl `
+            -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake" `
+            -DVCPKG_TARGET_TRIPLET=x64-windows `
             -DVCPKG_MANIFEST_MODE=OFF
         
     - name: Build
       run: cmake --build ${{ github.workspace }}/build --config ${{ matrix.build_type }}
       
-    - name: Test
+    - name: Linux - Test
+      if: runner.os == 'Linux'
       working-directory: ${{ github.workspace }}
-      run: ctest --test-dir ${{ github.workspace }}/build --build-config ${{ matrix.build_type }}
+      run: xvfb-run -a --server-args="-screen 0 1280x1024x24" \
+            ctest --test-dir build/ \
+            --build-config "${{ matrix.build_type }}" \
+            --output-on-failure
