@@ -18,6 +18,10 @@ file(CREATE_LINK
 find_package(OpenGL REQUIRED)
 find_package(glfw3 REQUIRED)
 find_package(GLEW REQUIRED)
+find_library(MATH_LIBRARY m)
+if(MATH_LIBRARY)
+    target_link_libraries(NoRo PRIVATE ${MATH_LIBRARY})
+endif()
 
 include_directories(NoRo/)
 
