@@ -87,7 +87,4 @@ jobs:
     - name: Linux - Test
       if: runner.os == 'Linux'
       working-directory: ${{ github.workspace }}
-      run: xvfb-run -a --server-args="-screen 0 1280x1024x24" \
-            ctest --test-dir build/ \
-            --build-config "${{ matrix.build_type }}" \
-            --output-on-failure
+      run: xvfb-run -a --server-args="-screen 0 1280x1024x24" ctest --test-dir build/ --build-config "${{ matrix.build_type }}" --output-on-failure
