@@ -59,11 +59,9 @@ jobs:
       run: |
         git clone --depth 1 https://github.com/glfw/glfw.git
         cd glfw
-        cmake -B build -DBUILD_SHARED_LIBS=OFF -DGLFW_BUILD_EXAMPLES=OFF -DGLFW_BUILD_TESTS=OFF -DGLFW_BUILD_DOCS=OFF
+        cmake -B build -DBUILD_SHARED_LIBS=OFF -DGLFW_BUILD_EXAMPLES=OFF -DGLFW_BUILD_TESTS=OFF -DGLFW_BUILD_DOCS=OFF -DCMAKE_INSTALL_PREFIX=../glfw_install
         cmake --build build --config Release
-        mkdir -p ../deps/include/GLFW ../deps/lib
-        cp include/GLFW/*.h ../deps/include/GLFW/
-        cp build/src/Release/glfw3.lib ../deps/lib/ || cp build/src/glfw3.lib ../deps/lib/
+        cmake --install build --config Release
 
     - name: Set reusable strings
       # Turn repeated input strings (such as the build output directory) into step outputs. These step outputs can be used throughout the workflow file.
