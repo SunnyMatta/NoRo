@@ -56,7 +56,6 @@ jobs:
     - name: Set reusable strings
       # Turn repeated input strings (such as the build output directory) into step outputs. These step outputs can be used throughout the workflow file.
       id: strings
-      if: runner.os == 'Windows'
       shell: bash
       run: |
         echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
@@ -71,14 +70,11 @@ jobs:
       if: runner.os == 'Windows'
       shell: pwsh
       run: |
-          \(build_dir = "\){{ steps.strings.outputs.build-output-dir }}".Replace('\', '/')
-          \(vcpkg_path = "\)env:VCPKG_INSTALLATION_ROOT".Replace('\', '/')
-
           cmake -S . -B "\$build_dir" `
             -DCMAKE_BUILD_TYPE=\${{ matrix.build_type }} `
             -DCMAKE_CXX_COMPILER=cl `
             -DCMAKE_C_COMPILER=cl `
-            -DCMAKE_TOOLCHAIN_FILE="$vcpkg_path/scripts/buildsystems/vcpkg.cmake" `
+            -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake" `
             -DVCPKG_TARGET_TRIPLET=x64-windows
         
     - name: Linux - Build
