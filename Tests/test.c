@@ -3,12 +3,12 @@
     THIS FILE IS A TEST!
 */
 
-#define PBRV "../Tests/Shaders/pbr.vert"
-#define PBRF "../Tests/Shaders/pbr.frag"
-#define SKYBOXV "../Tests/Shaders/skybox.vert"
-#define SKYBOXF "../Tests/Shaders/skybox.frag"
-#define SHADOWV "../Tests/Shaders/shadow.vert"
-#define SHADOWF "../Tests/Shaders/shadow.frag"
+#define PBRV "Tests/Shaders/pbr.vert"
+#define PBRF "Tests/Shaders/pbr.frag"
+#define SKYBOXV "Tests/Shaders/skybox.vert"
+#define SKYBOXF "Tests/Shaders/skybox.frag"
+#define SHADOWV "Tests/Shaders/shadow.vert"
+#define SHADOWF "Tests/Shaders/shadow.frag"
 
   void loop(){
 
@@ -16,9 +16,9 @@ GLuint PBR = prepshader(PBRV, PBRF);
 GLuint skybox = prepshader(SKYBOXV, SKYBOXF);
 GLuint Shadow = prepshader(SHADOWV, SHADOWF);
 
-model SponzaScene = LoadMesh("../Tests/Model/Untitled.gltf");
+model SponzaScene = LoadMesh("Tests/Model/Untitled.gltf");
 
-unsigned int hdr = Load_HDRenv("../Tests/hdr.hdr");
+unsigned int hdr = Load_HDRenv("Tests/hdr.hdr");
 
         mat4 projection;
         mat4 view;
