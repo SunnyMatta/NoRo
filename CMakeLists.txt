@@ -41,7 +41,7 @@ else()
 
 endif()
 
-if(MATH_LIBRARY)
+if(NOT WIN32)
     target_link_libraries(NoRo PRIVATE m)
     target_link_libraries(NoRo-Tests PRIVATE m)
 endif()
