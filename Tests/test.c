@@ -1,7 +1,4 @@
 #include <init.h>
-/*.
-    THIS FILE IS A TEST!
-*/
 
 #define PBRV "Tests/Shaders/pbr.vert"
 #define PBRF "Tests/Shaders/pbr.frag"
