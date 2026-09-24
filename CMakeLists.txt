@@ -32,7 +32,11 @@ endif()
 
 add_executable(NoRo-Tests Tests/test.c)
 target_compile_definitions(NoRo-Tests PRIVATE NoRo_TEST)
-target_link_libraries(NoRo-Tests PRIVATE OpenGL::GL glfw m GLEW::GLEW ktx)
+target_link_libraries(NoRo-Tests PRIVATE OpenGL::GL glfw GLEW::GLEW ktx)
+find_library(MATH_LIBRARY m)
+if(MATH_LIBRARY)
+    target_link_libraries(NoRo-Tests PRIVATE m)
+endif()
 
 
 add_test(NAME NoRoTest COMMAND NoRo-Tests)
